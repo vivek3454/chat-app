@@ -9,6 +9,7 @@ const Home = lazy(() => import('./pages/home/Home'))
 const Login = lazy(() => import('./pages/login/Login'))
 const Chat = lazy(() => import('./pages/chat/Chat'))
 const GroupsManagement = lazy(() => import('./pages/groups-management/GroupsManagement'))
+const NotFound = lazy(() => import('./pages/not-found/NotFound'))
 
 const user = true;
 
@@ -29,6 +30,8 @@ function App() {
               <Login />
             </ProtectecRoute>
           } />
+
+          <Route path='*' element={<NotFound />} />
         </Routes>
       </Router>
 
