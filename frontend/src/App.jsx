@@ -2,8 +2,9 @@ import './App.css'
 
 import { Toaster } from './components/ui/sonner'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import ProtectecRoute from './components/auth/ProtectecRoute';
+import LayoutLoader from './components/loaders/LayoutLoader';
 
 const Home = lazy(() => import('./pages/home/Home'))
 const Login = lazy(() => import('./pages/login/Login'))
@@ -18,21 +19,23 @@ function App() {
   return (
     <>
       <Router>
-        <Routes>
-          <Route element={<ProtectecRoute user={user} />}>
-            <Route path='/' element={<Home />} />
-            <Route path='/chat/:chatId' element={<Chat />} />
-            <Route path='/groups-management' element={<GroupsManagement />} />
-          </Route>
+        <Suspense fallback={<LayoutLoader />}>
+          <Routes>
+            <Route element={<ProtectecRoute user={user} />}>
+              <Route path='/' element={<Home />} />
+              <Route path='/chat/:chatId' element={<Chat />} />
+              <Route path='/groups-management' element={<GroupsManagement />} />
+            </Route>
 
-          <Route path='/login' element={
-            <ProtectecRoute user={!user} redirect='/'>
-              <Login />
-            </ProtectecRoute>
-          } />
+            <Route path='/login' element={
+              <ProtectecRoute user={!user} redirect='/'>
+                <Login />
+              </ProtectecRoute>
+            } />
 
-          <Route path='*' element={<NotFound />} />
-        </Routes>
+            <Route path='*' element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </Router>
 
       <Toaster

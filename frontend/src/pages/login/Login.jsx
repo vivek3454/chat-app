@@ -87,7 +87,7 @@ const Login = () => {
     return (
         <div className="flex items-start min-h-screen p-4 bg-gradient-to-r from-blue-500/55 to-green-500.55 ">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/3 shadow bg-white border rounded-lg p-4 m-auto">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-96 w-full shadow bg-white border rounded-lg p-4 m-auto">
                     <h1 className="text-4xl font-bold text-center mb-8">
                         {isLogin ? "Login" : "Signup"}
                     </h1>
