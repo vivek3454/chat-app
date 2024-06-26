@@ -1,9 +1,10 @@
 import AppLayout from '@/components/layouts/AppLayout'
-import React from 'react'
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <div className='h-full flex justify-center items-center'>
+      <h1 className='text-lg text-gray-400'>Select friend to chat</h1>
+    </div>
   )
 }
 

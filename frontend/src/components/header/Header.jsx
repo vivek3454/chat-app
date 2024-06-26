@@ -1,35 +1,22 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu"
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet"
+} from "@/components/ui/navigation-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
+import { Suspense, lazy, useEffect, useState } from 'react';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
-import { MdLogout, MdMenu } from 'react-icons/md';
-import { Link, useNavigate } from 'react-router-dom';
 import { FaPlus, FaSearch } from 'react-icons/fa';
 import { FaUser, FaUserGroup } from "react-icons/fa6";
 import { IoNotifications } from "react-icons/io5";
+import { MdLogout } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 import BackDropLoader from '../loaders/BackDropLoader';
 import Profile from '../specific/Profile';
 
@@ -49,6 +36,10 @@ const Header = () => {
 
   const toggleSheet = () => {
     setSheetOpen(!isSheetOpen);
+  };
+
+  const openGroup = () => {
+    setIsCreateGroupOpen(!isCreateGroupOpen);
   };
 
   const openSearch = () => {
@@ -95,7 +86,7 @@ const Header = () => {
             <NavMenuItem
               icon={<FaPlus className='text-lg sm:text-xl' />}
               title="Create Group"
-              onClick={() => { }}
+              onClick={openGroup}
             />
 
             <NavMenuItem
