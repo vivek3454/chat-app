@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import ChatItem from '../shared/ChatItem'
 
 const Chatlist = ({
@@ -32,4 +32,4 @@ const Chatlist = ({
   )
 }
 
-export default Chatlist
+export default memo(Chatlist)
