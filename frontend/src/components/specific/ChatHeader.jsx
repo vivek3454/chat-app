@@ -1,8 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Link } from "react-router-dom"
-import { Info, Phone, Video } from 'lucide-react';
-import { Button, buttonVariants } from "../ui/button";
-import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Phone, Video } from 'lucide-react';
+import { Button } from "../ui/button";
 
 const ChatHeader = () => {
     return (
