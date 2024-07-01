@@ -1,3 +1,5 @@
+import GroupDetails from '@/components/specific/GroupDetails'
+import GroupList from '@/components/specific/GroupList'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import React, { useState } from 'react'
@@ -19,10 +21,13 @@ const GroupsManagement = () => {
     <div className='h-screen'>
       <Sheet open={isMobileMenuOpen} onOpenChange={handleMobile}>
         <SheetContent side="left" className="p-4 w-full">
+          <GroupList />
         </SheetContent>
       </Sheet>
       <div className='h-screen grid grid-cols-1 md:grid-cols-[30%_70%]'>
-        <div className='hidden md:flex flex-col'>Group List</div>
+        <div className='hidden md:flex flex-col'>
+          <GroupList />
+        </div>
         <div className='bg-gray-50 py-4 px-12'>
           <div className='flex justify-between items-center'>
             <Button onClick={navigateBack} variant="outline" size="sm" className="rounded-full">
@@ -32,7 +37,7 @@ const GroupsManagement = () => {
               <MdMenu size={24} />
             </Button>
           </div>
-          <h1>Group Details</h1>
+          <GroupDetails />
         </div>
       </div>
     </div>
