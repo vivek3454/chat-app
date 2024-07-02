@@ -11,7 +11,7 @@ const UserComp = () => {
                 </Avatar>
                 <h2 className="text-lg">User 1</h2>
             </div>
-            <div className="w-10 h-10 rounded-full bg-blue-400 flex justify-center items-center">
+            <div className="w-10 h-10 rounded-full bg-blue-400 flex justify-center cursor-pointer items-center">
                 <FaPlus className="text-white" />
             </div>
         </div>

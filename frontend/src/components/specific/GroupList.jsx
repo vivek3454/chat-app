@@ -3,7 +3,65 @@ import GroupItem from './GroupItem'
 
 const GroupList = ({w,myGroups=[],chatId}) => {
   return (
-    <div>
+    <div className='h-screen overflow-y-auto'>
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
+      <GroupItem />
       <GroupItem />
     </div>
   )

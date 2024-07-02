@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Dialog,
   DialogContent,
@@ -6,11 +5,10 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
+import UserComp from "../shared/UserComp"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { FaPlus } from "react-icons/fa6"
-import UserComp from "../shared/UserComp"
 
 
 const CreateGroup = ({ isCreateGroupOpen, setIsCreateGroupOpen }) => {
