@@ -1,15 +1,19 @@
+import { Link } from "react-router-dom"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Separator } from "../ui/separator"
-import group from "@/assets/group.png"
+import groupImg from "@/assets/group.png"
 
-const GroupItem = ({ chatId, _id, avatar }) => {
+const GroupItem = ({ chatId, group }) => {
+    // const { name, _id, avatar } = group;
+
     return (
-        <div
+        <Link
+            // to={`?group/${_id}`}
             // onClick={(e) => chatId === _id && e.preventDefault()}
             className={`hover:bg-gray-50 cursor-pointer`}>
             <div className="flex gap-4 p-2">
                 <Avatar>
-                    <AvatarImage className="relative z-10" src={group} />
+                    <AvatarImage className="relative z-10" src={groupImg} />
                     <AvatarFallback className="relative z-10">U</AvatarFallback>
                 </Avatar>
                 <div>
@@ -17,7 +21,7 @@ const GroupItem = ({ chatId, _id, avatar }) => {
                 </div>
             </div>
             <Separator />
-        </div>
+        </Link>
     )
 }
 

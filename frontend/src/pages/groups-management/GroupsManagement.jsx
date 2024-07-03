@@ -5,14 +5,17 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import React, { useState } from 'react'
 import { FaArrowLeftLong } from 'react-icons/fa6'
 import { MdMenu } from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const GroupsManagement = () => {
-  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const chatId = useSearchParams()[0].get("group");
+
   const navigateBack = () => {
     navigate("/")
   }
+
 
   const handleMobile = () => {
     setIsMobileMenuOpen((prev) => !prev)

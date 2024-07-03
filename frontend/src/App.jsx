@@ -12,6 +12,12 @@ const Chat = lazy(() => import('./pages/chat/Chat'))
 const GroupsManagement = lazy(() => import('./pages/groups-management/GroupsManagement'))
 const NotFound = lazy(() => import('./pages/not-found/NotFound'))
 
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'))
+const Dashboard = lazy(() => import('./pages/admin/Dashboard'))
+const ChatManagement = lazy(() => import('./pages/admin/ChatManagement'))
+const UserManagement = lazy(() => import('./pages/admin/UserManagement'))
+const Messages = lazy(() => import('./pages/admin/Messages'))
+
 const user = true;
 
 function App() {
@@ -32,6 +38,13 @@ function App() {
                 <Login />
               </ProtectecRoute>
             } />
+
+            {/* Admin Routes */}
+            <Route path='/admin' element={<AdminLogin />} />
+            <Route path='/admin/dashboard' element={<Dashboard />} />
+            <Route path='/admin/users-management' element={<UserManagement />} />
+            <Route path='/admin/chats-management' element={<ChatManagement />} />
+            <Route path='/admin/messages' element={<Messages />} />
 
             <Route path='*' element={<NotFound />} />
           </Routes>
