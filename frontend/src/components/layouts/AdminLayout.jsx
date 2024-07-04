@@ -7,7 +7,7 @@ const AdminLayout = ({ children }) => {
 
     if(!isAdmin) return <Navigate to={"/admin"} />
     return (
-        <div className='grid grid-cols-[15%_85%] h-screen'>
+        <div className='grid grid-cols-[15%_85%] min-h-screen'>
             <Sidebar />
             <div className='bg-gray-50 p-5'>{children}</div>
         </div>
