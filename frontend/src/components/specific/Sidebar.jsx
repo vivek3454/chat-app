@@ -30,7 +30,7 @@ const Sidebar = () => {
     const { pathname } = useLocation();
 
     return (
-        <div className='py-4'>
+        <div className='py-4 sticky top-0 h-screen'>
             <div className='flex flex-col gap-2'>
                 {adminTabs.map((tab) => (
                     <Link className='mx-7' key={tab.name} to={tab.path}>
