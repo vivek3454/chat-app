@@ -43,4 +43,26 @@ const login = TryCatch(async (req, res, next) => {
     sendToken(res, user, 200, `Welcome Back, ${user.name}`);
 });
 
-export { login, signup };
+
+const getMyProfile = TryCatch(async (req, res, next) => {
+    const user = await User.findById(req.user);
+
+    if (!user) return next(new ErrorHandler("User not found", 404));
+
+    res.status(200).json({
+        success: true,
+        user,
+    });
+});
+
+const logout = TryCatch(async (req, res) => {
+    return res
+        .status(200)
+        .cookie("chat-token", "", { ...cookieOptions, maxAge: 0 })
+        .json({
+            success: true,
+            message: "Logged out successfully",
+        });
+});
+
+export { login, signup, getMyProfile, logout };
