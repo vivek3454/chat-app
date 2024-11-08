@@ -1,5 +1,7 @@
+import { compare } from "bcrypt";
 import { TryCatch } from "../middlewares/error.js";
 import { User } from "../models/user.js";
+import { Chat } from "../models/chat.js";
 import { sendToken, uploadFilesToCloudinary } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 
@@ -65,4 +67,13 @@ const logout = TryCatch(async (req, res) => {
         });
 });
 
-export { login, signup, getMyProfile, logout };
+const searchUser = TryCatch(async (req, res) => {
+    const { name = "" } = req.query;
+
+    return res.status(200).json({
+        success: true,
+        message: name,
+    });
+});
+
+export { login, signup, getMyProfile, logout, searchUser };

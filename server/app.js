@@ -5,6 +5,7 @@ import { connectDB } from "./utils/features.js";
 import bodyParser from "body-parser";
 import { errorMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
+import chatRouter from "./routes/chat.js";
 
 dotenv.config({
     path: "./.env",
@@ -21,11 +22,12 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/api/v1/user",userRouter)
+app.use("/api/v1/user", userRouter)
+app.use("/api/v1/chat", chatRouter)
 
 app.use(errorMiddleware);
 
-app.listen(port,()=>{
+app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 })
 
