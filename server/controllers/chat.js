@@ -1,6 +1,6 @@
 import {
     ALERT,
-    NEW_MESSAGE,
+    // NEW_MESSAGE,
     NEW_MESSAGE_ALERT,
     REFETCH_CHATS,
 } from "../constants/events.js";
