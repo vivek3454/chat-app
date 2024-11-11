@@ -1,11 +1,14 @@
 import express from "express";
 import {
     addMembers,
+    deleteChat,
+    getChatDetails,
     getMyChats,
     getMyGroups,
     leaveGroup,
     newGroupChat,
     removeMember,
+    renameGroup,
     sendAttachments
 } from "../controllers/chat.js";
 import { isAuthenticated } from "../middlewares/auth.js";
@@ -34,6 +37,13 @@ chatRouter.post(
     attachmentsMulter,
     sendAttachments
 );
+
+
+chatRouter
+    .route("/:id")
+    .get(getChatDetails)
+    .put(renameGroup)
+    .delete(deleteChat);
 
 
 export default chatRouter;
