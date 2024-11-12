@@ -5,8 +5,8 @@ import { isAuthenticated } from "../middlewares/auth.js";
 
 const userRouter = express.Router();
 
-userRouter.post("/signup", singleAvatar, signup);
-userRouter.post("/login", login);
+userRouter.post("/signup", singleAvatar, registerValidator(), validateHandler, signup);
+userRouter.post("/login", loginValidator(), validateHandler, login);
 
 userRouter.use(isAuthenticated);
 

@@ -7,6 +7,7 @@ import { errorMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
 import chatRouter from "./routes/chat.js";
 import { createUser } from "./seeders/user.js";
+import { createGroupChats, createMessagesInAChat, createSingleChats } from "./seeders/chat.js";
 
 dotenv.config({
     path: "./.env",
@@ -16,6 +17,8 @@ const app = express();
 
 const mongoURI = process.env.MONGO_URI;
 connectDB(mongoURI);
+
+// createMessagesInAChat("67335e99909e10475e41716c",50)
 
 const port = 3000;
 

@@ -3,6 +3,7 @@ import {
     addMembers,
     deleteChat,
     getChatDetails,
+    getMessages,
     getMyChats,
     getMyGroups,
     leaveGroup,
@@ -38,12 +39,12 @@ chatRouter.post(
     sendAttachments
 );
 
-
 chatRouter
-    .route("/:id")
-    .get(getChatDetails)
-    .put(renameGroup)
-    .delete(deleteChat);
+.route("/:id")
+.get(getChatDetails)
+.put(renameGroup)
+.delete(deleteChat);
 
+chatRouter.get("/message/:id", getMessages);
 
 export default chatRouter;
