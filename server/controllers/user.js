@@ -1,9 +1,11 @@
 import { compare } from "bcrypt";
 import { TryCatch } from "../middlewares/error.js";
-import { User } from "../models/user.js";
 import { Chat } from "../models/chat.js";
-import { cookieOptions, sendToken, uploadFilesToCloudinary } from "../utils/features.js";
+import { Request } from "../models/request.js";
+import { User } from "../models/user.js";
+import { cookieOptions, emitEvent, sendToken } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
+import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 
 const signup = TryCatch(async (req, res, next) => {
     const { name, username, password, bio } = req.body;
@@ -100,4 +102,96 @@ const searchUser = TryCatch(async (req, res) => {
     });
 });
 
-export { login, signup, getMyProfile, logout, searchUser };
+const sendFriendRequest = TryCatch(async (req, res, next) => {
+    const { userId } = req.body;
+
+    const request = await Request.findOne({
+        $or: [
+            { sender: req.user, receiver: userId },
+            { sender: userId, receiver: req.user },
+        ],
+    });
+
+    if (request) return next(new ErrorHandler("Request already sent", 400));
+
+    await Request.create({
+        sender: req.user,
+        receiver: userId,
+    });
+
+    emitEvent(req, NEW_REQUEST, [userId]);
+
+    return res.status(200).json({
+        success: true,
+        message: "Friend Request Sent",
+    });
+});
+
+const acceptFriendRequest = TryCatch(async (req, res, next) => {
+    const { requestId, accept } = req.body;
+
+    const request = await Request.findById(requestId)
+        .populate("sender", "name")
+        .populate("receiver","name");
+
+    if (!request) return next(new ErrorHandler("Request not found", 404));
+
+    console.log("Request",request);
+    
+
+    if (request.receiver._id.toString() !== req.user.toString())
+        return next(
+            new ErrorHandler("You are not authorized to accept this request", 401)
+        );
+
+    if (!accept) {
+        await request.deleteOne();
+
+        return res.status(200).json({
+            success: true,
+            message: "Friend Request Rejected",
+        });
+    }
+
+    const members = [request.sender._id, request.receiver._id];
+
+    await Promise.all([
+        Chat.create({
+            members,
+            name: `${request.sender.name}-${request.receiver.name}`,
+        }),
+        request.deleteOne(),
+    ]);
+
+    emitEvent(req, REFETCH_CHATS, members);
+
+    return res.status(200).json({
+        success: true,
+        message: "Friend Request Accepted",
+        senderId: request.sender._id,
+    });
+});
+
+const getMyNotifications = TryCatch(async (req, res) => {
+    const requests = await Request.find({ receiver: req.user }).populate(
+        "sender",
+        "name avatar"
+    );
+
+    const allRequests = requests.map(({ _id, sender }) => ({
+        _id,
+        sender: {
+            _id: sender._id,
+            name: sender.name,
+            avatar: sender.avatar.url,
+        },
+    }));
+
+    return res.status(200).json({
+        success: true,
+        allRequests,
+    });
+});
+
+export { acceptFriendRequest, getMyNotifications, getMyProfile, login, logout, searchUser, sendFriendRequest, signup };
+
