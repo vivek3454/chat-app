@@ -1,11 +1,12 @@
 import { compare } from "bcrypt";
+import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
 import { Request } from "../models/request.js";
 import { User } from "../models/user.js";
 import { cookieOptions, emitEvent, sendToken } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
-import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
+import { getOtherMember } from "../lib/helper.js";
 
 const signup = TryCatch(async (req, res, next) => {
     const { name, username, password, bio } = req.body;
@@ -132,12 +133,12 @@ const acceptFriendRequest = TryCatch(async (req, res, next) => {
 
     const request = await Request.findById(requestId)
         .populate("sender", "name")
-        .populate("receiver","name");
+        .populate("receiver", "name");
 
     if (!request) return next(new ErrorHandler("Request not found", 404));
 
-    console.log("Request",request);
-    
+    console.log("Request", request);
+
 
     if (request.receiver._id.toString() !== req.user.toString())
         return next(
@@ -193,5 +194,42 @@ const getMyNotifications = TryCatch(async (req, res) => {
     });
 });
 
-export { acceptFriendRequest, getMyNotifications, getMyProfile, login, logout, searchUser, sendFriendRequest, signup };
+const getMyFriends = TryCatch(async (req, res) => {
+    const chatId = req.query.chatId;
+
+    const chats = await Chat.find({
+        members: req.user,
+        groupChat: false,
+    }).populate("members", "name avatar");
+
+    const friends = chats.map(({ members }) => {
+        const otherUser = getOtherMember(members, req.user);
+
+        return {
+            _id: otherUser._id,
+            name: otherUser.name,
+            avatar: otherUser.avatar.url,
+        };
+    });
+
+    if (chatId) {
+        const chat = await Chat.findById(chatId);
+
+        const availableFriends = friends.filter(
+            (friend) => !chat.members.includes(friend._id)
+        );
+
+        return res.status(200).json({
+            success: true,
+            friends: availableFriends,
+        });
+    } else {
+        return res.status(200).json({
+            success: true,
+            friends,
+        });
+    }
+});
+
+export { acceptFriendRequest, getMyFriends, getMyNotifications, getMyProfile, login, logout, searchUser, sendFriendRequest, signup };
 
