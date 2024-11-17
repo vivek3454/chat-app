@@ -29,6 +29,7 @@ app.use(cookieParser());
 // createUser(5);
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/chat", chatRouter)
+app.use("/api/v1/admin", adminRoute);
 
 app.use(errorMiddleware);
 
