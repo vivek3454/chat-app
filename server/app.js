@@ -16,6 +16,8 @@ dotenv.config({
 const app = express();
 
 const mongoURI = process.env.MONGO_URI;
+const adminSecretKey = process.env.ADMIN_SECRET_KEY || "adsasdsdfsdfsdfd";
+
 connectDB(mongoURI);
 
 // createMessagesInAChat("67335e99909e10475e41716c",50)
@@ -29,7 +31,7 @@ app.use(cookieParser());
 // createUser(5);
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/chat", chatRouter)
-app.use("/api/v1/admin", adminRoute);
+app.use("/api/v1/admin", adminRouter);
 
 app.use(errorMiddleware);
 
@@ -37,3 +39,4 @@ app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 })
 
+export { adminSecretKey };
