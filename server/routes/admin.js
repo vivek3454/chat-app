@@ -29,4 +29,4 @@ adminRouter.get("/messages", allMessages);
 
 adminRouter.get("/stats", getDashboardStats);
 
-export default app;
+export default adminRouter;

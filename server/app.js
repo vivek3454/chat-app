@@ -8,12 +8,20 @@ import cookieParser from "cookie-parser";
 import chatRouter from "./routes/chat.js";
 import { createUser } from "./seeders/user.js";
 import { createGroupChats, createMessagesInAChat, createSingleChats } from "./seeders/chat.js";
+import { Server } from "socket.io";
+import { createServer } from "http";
+import { corsOptions } from "./constants/config.js";
+import adminRouter from "./routes/admin.js";
 
 dotenv.config({
     path: "./.env",
 });
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+    cors: corsOptions,
+});
 
 const mongoURI = process.env.MONGO_URI;
 const adminSecretKey = process.env.ADMIN_SECRET_KEY || "adsasdsdfsdfsdfd";
@@ -33,9 +41,18 @@ app.use("/api/v1/user", userRouter)
 app.use("/api/v1/chat", chatRouter)
 app.use("/api/v1/admin", adminRouter);
 
+io.on("connection", (socket) => {
+    console.log("connection");
+
+    socket.on("disconnect", () => {
+        console.log("connection disconnected");
+
+    });
+});
+
 app.use(errorMiddleware);
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 })
 
