@@ -12,6 +12,8 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 import { corsOptions } from "./constants/config.js";
 import adminRouter from "./routes/admin.js";
+import { v4 as uuid } from "uuid";
+import { Message } from "./models/message.js";
 
 dotenv.config({
     path: "./.env",
@@ -43,6 +45,39 @@ app.use("/api/v1/admin", adminRouter);
 
 io.on("connection", (socket) => {
     console.log("connection");
+
+
+    socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
+        const messageForRealTime = {
+            content: message,
+            _id: uuid(),
+            sender: {
+                _id: user._id,
+                name: user.name,
+            },
+            chat: chatId,
+            createdAt: new Date().toISOString(),
+        };
+
+        const messageForDB = {
+            content: message,
+            sender: user._id,
+            chat: chatId,
+        };
+
+        const membersSocket = getSockets(members);
+        io.to(membersSocket).emit(NEW_MESSAGE, {
+            chatId,
+            message: messageForRealTime,
+        });
+        io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId });
+
+        try {
+            await Message.create(messageForDB);
+        } catch (error) {
+            throw new Error(error);
+        }
+    });
 
     socket.on("disconnect", () => {
         console.log("connection disconnected");
