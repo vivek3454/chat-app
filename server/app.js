@@ -14,6 +14,7 @@ import { corsOptions } from "./constants/config.js";
 import adminRouter from "./routes/admin.js";
 import { v4 as uuid } from "uuid";
 import { Message } from "./models/message.js";
+import { getSockets } from "./lib/helper.js";
 
 dotenv.config({
     path: "./.env",
@@ -27,6 +28,7 @@ const io = new Server(server, {
 
 const mongoURI = process.env.MONGO_URI;
 const adminSecretKey = process.env.ADMIN_SECRET_KEY || "adsasdsdfsdfsdfd";
+const userSocketIDs = new Map();
 
 connectDB(mongoURI);
 
@@ -43,9 +45,17 @@ app.use("/api/v1/user", userRouter)
 app.use("/api/v1/chat", chatRouter)
 app.use("/api/v1/admin", adminRouter);
 
-io.on("connection", (socket) => {
-    console.log("connection");
+io.use((socket, next) => {
+    cookieParser()(
+        socket.request,
+        socket.request.res,
+        async (err) => await socketAuthenticator(err, socket, next)
+    );
+});
 
+io.on("connection", (socket) => {
+    const user = socket.user;
+    userSocketIDs.set(user._id.toString(), socket.id);
 
     socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
         const messageForRealTime = {
@@ -80,8 +90,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log("connection disconnected");
-
+        userSocketIDs.delete(user._id.toString());
     });
 });
 
@@ -91,4 +100,4 @@ server.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 })
 
-export { adminSecretKey };
+export { adminSecretKey, usersco };
