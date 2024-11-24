@@ -15,6 +15,7 @@ import adminRouter from "./routes/admin.js";
 import { v4 as uuid } from "uuid";
 import { Message } from "./models/message.js";
 import { getSockets } from "./lib/helper.js";
+import cors from "cors";
 
 dotenv.config({
     path: "./.env",
@@ -39,6 +40,7 @@ const port = 3000;
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors(corsOptions));
 
 // createUser(5);
 app.use("/api/v1/user", userRouter)
@@ -100,4 +102,4 @@ server.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 })
 
-export { adminSecretKey, usersco };
+export { adminSecretKey, userSocketIDs };
