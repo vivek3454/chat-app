@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/avatar"
 import { FaCamera } from "react-icons/fa";
 import user from "@/assets/user-img.jpeg"
+import { axiosInstance } from "@/utils/axiosInstance"
+import { userExists } from "@/redux/reducers/auth"
+import { useDispatch } from "react-redux"
 
 
 const Login = () => {
@@ -78,10 +81,22 @@ const Login = () => {
 
 
     const toggleLogin = () => setIsLogin((prev) => !prev);
+    const dispatch = useDispatch();
 
-    const onSubmit = (data) => {
-        console.log("data", data);
-        toast.success("Login successful.");
+    const onSubmit = async (apiData) => {
+
+        try {
+            const { data } = await axiosInstance.post("/user/login",
+                {
+                    username: apiData.username,
+                    password: apiData.password,
+                },
+            );
+            dispatch(userExists(data.user));
+            toast.success(data.message)
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "Something Went Wrong");
+        }
     }
 
     return (
@@ -171,9 +186,12 @@ const Login = () => {
                             </FormItem>
                         )}
                     />
-                    <Button variant="chat" className="w-full mt-6" type="submit">
+                    <Button className="w-full mt-6" type="submit">
                         {isLogin ? "Login" : "Signup"}
                     </Button>
+                    {/* <Button variant="chat" className="w-full mt-6" type="submit">
+                        {isLogin ? "Login" : "Signup"}
+                    </Button> */}
                     <Button
                         className="text-blue-400 mx-auto flex"
                         onClick={toggleLogin}
