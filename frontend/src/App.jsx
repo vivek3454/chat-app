@@ -8,6 +8,8 @@ import LayoutLoader from './components/loaders/LayoutLoader';
 import { axiosInstance } from './utils/axiosInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import { userExists, userNotExists } from './redux/reducers/auth';
+import { handleErrorModal } from './redux/reducers/error';
+import ErrorModal from './components/specific/ErrorModal';
 
 const Home = lazy(() => import('./pages/home/Home'))
 const Login = lazy(() => import('./pages/login/Login'))
@@ -26,6 +28,8 @@ function App() {
   const { user, loader } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
+  const { isLoading } = useSelector((state) => state.loading);
+
   useEffect(() => {
     (async () => {
       try {
@@ -36,10 +40,16 @@ function App() {
       }
     })()
   }, [dispatch]);
+
+
   return loader ? (
     <LayoutLoader />
   ) : (
     <>
+
+      {isLoading && <LayoutLoader />}
+      <ErrorModal />
+
       <Router>
         <Suspense fallback={<LayoutLoader />}>
           <Routes>
