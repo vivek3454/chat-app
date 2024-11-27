@@ -24,6 +24,7 @@ import user from "@/assets/user-img.jpeg"
 import { axiosInstance } from "@/utils/axiosInstance"
 import { userExists } from "@/redux/reducers/auth"
 import { useDispatch } from "react-redux"
+import usePostApiReq from "@/hooks/usePostApiReq"
 
 
 const Login = () => {
@@ -83,21 +84,29 @@ const Login = () => {
     const toggleLogin = () => setIsLogin((prev) => !prev);
     const dispatch = useDispatch();
 
-    const onSubmit = async (apiData) => {
+    const { res, fetchData, isLoading } = usePostApiReq();
 
-        try {
-            const { data } = await axiosInstance.post("/user/login",
-                {
-                    username: apiData.username,
-                    password: apiData.password,
-                },
-            );
-            dispatch(userExists(data.user));
-            toast.success(data.message)
-        } catch (error) {
-            toast.error(error?.response?.data?.message || "Something Went Wrong");
+    const onSubmit = async (apiData) => {
+        if (isLogin) {
+            fetchData("/user/login", apiData);
+        }
+        else {
+            const formData = new FormData();
+            formData.append("avatar", apiData.userImg);
+            formData.append("name", apiData.name);
+            formData.append("bio", apiData.bio);
+            formData.append("username", apiData.username);
+            formData.append("password", apiData.password);
+
+            fetchData("/user/signup", formData);
         }
     }
+
+    useEffect(() => {
+        if (res?.status === 200 || res?.status === 201) {
+            dispatch(userExists(res?.data?.user))
+        }
+    }, [res])
 
     return (
         <div className="flex items-start min-h-screen p-4 bg-gradient-to-r from-blue-500/55 to-green-500.55 ">

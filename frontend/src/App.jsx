@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userExists, userNotExists } from './redux/reducers/auth';
 import { handleErrorModal } from './redux/reducers/error';
 import ErrorModal from './components/specific/ErrorModal';
+import useGetApiReq from './hooks/useGetApiReq';
 
 const Home = lazy(() => import('./pages/home/Home'))
 const Login = lazy(() => import('./pages/login/Login'))
@@ -28,18 +29,24 @@ function App() {
   const { user, loader } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const { isLoading } = useSelector((state) => state.loading);
+  const { isLoading } = useSelector((state) => state?.loading);
+  const { res, fetchData } = useGetApiReq();
 
   useEffect(() => {
     (async () => {
-      try {
-        const { data } = axiosInstance.get("/user/me")
-        dispatch(userExists(data.user))
-      } catch (error) {
-        dispatch(userNotExists());
-      }
+      fetchData("/user/me");
     })()
-  }, [dispatch]);
+  }, []);
+
+
+  useEffect(() => {
+    if (res?.status === 200 || res?.status === 201) {
+      dispatch(userExists(res?.data?.user))
+    }
+    else {
+      dispatch(userNotExists());
+    }
+  }, [res])
 
 
   return loader ? (

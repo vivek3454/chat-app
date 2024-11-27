@@ -1,8 +1,8 @@
 import { BiSolidError } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
-import { handleErrorModal } from "../store/slices/errorSlice";
+import { handleErrorModal } from "@/redux/reducers/error";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 const ErrorModal = () => {
     const dispatch = useDispatch();

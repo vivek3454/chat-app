@@ -6,7 +6,7 @@ const initialState = {
 
 
 const loading = createSlice({
-    name: "loadingSlice",
+    name: "loading",
     initialState,
     reducers: {
         handleLoading: (state, action) => {
