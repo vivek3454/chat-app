@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { axiosInstance } from "../utils/axiosInstance";
 import { useDispatch } from "react-redux";
-import { handleErrorModal, handleUnautorizedModalOpen } from "@/store/slices/errorSlice";
-import toast from "react-hot-toast";
-import { handleLoading } from "@/store/slices/loadingSlice";
+import { handleErrorModal, handleUnautorizedModalOpen } from "@/redux/reducers/error";
+import { handleLoading } from "@/redux/reducers/loading";
+import { toast } from "sonner";
 
 const usePostApiReq = () => {
     const [res, setRes] = useState(null);

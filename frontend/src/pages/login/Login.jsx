@@ -52,7 +52,7 @@ const Login = () => {
             password: z.string().min(2, {
                 message: "Password is invalid. It must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*).",
             }),
-            // userImg: z.instanceof(FileList).optional(),
+            userImg: z.any().refine(file => file && file.length > 0, "User Image is required"),
             // preview: z.optional()
         })
 
@@ -63,12 +63,14 @@ const Login = () => {
             bio: "",
             username: "",
             password: "",
-            userImg: "",
+            userImg: null,
             preview: ""
         },
     })
     const fileRef = form.register("userImg");
     const userImg = form.watch("userImg");
+    console.log("userImg", userImg);
+
 
     useEffect(() => {
         if (userImg && userImg.length > 0) {
@@ -87,12 +89,14 @@ const Login = () => {
     const { res, fetchData, isLoading } = usePostApiReq();
 
     const onSubmit = async (apiData) => {
+
         if (isLogin) {
             fetchData("/user/login", apiData);
         }
         else {
+            console.log("onSubmit", apiData);
             const formData = new FormData();
-            formData.append("avatar", apiData.userImg);
+            formData.append("avatar", apiData.userImg[0]);
             formData.append("name", apiData.name);
             formData.append("bio", apiData.bio);
             formData.append("username", apiData.username);
@@ -116,31 +120,31 @@ const Login = () => {
                         {isLogin ? "Login" : "Signup"}
                     </h1>
 
-                    <div className="flex flex-col items-center justify-center">
-                        <Avatar className="w-32 h-32 mb-3 z-10">
-                            <AvatarImage src={form.watch("preview")} alt="@shadcn" />
-                            <AvatarFallback>
-                                <img src={user} alt="" />
-                            </AvatarFallback>
-                        </Avatar>
-                        <FormField
-                            control={form.control}
-                            name="userImg"
-                            render={({ field }) => (
-                                <FormItem className="z-20 relative">
-                                    <FormLabel className="cursor-pointer flex absolute -right-14 bg-gray-800/60 p-2 text-white rounded-full -top-12">
-                                        <FaCamera size={16} />
-                                    </FormLabel>
-                                    <FormControl className="hidden">
-                                        <Input type="file" {...fileRef} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-
                     {!isLogin && <>
+                        <div className="flex flex-col items-center justify-center">
+                            <Avatar className="w-32 h-32 mb-3 z-10">
+                                <AvatarImage src={form.watch("preview")} alt="@shadcn" />
+                                <AvatarFallback>
+                                    <img src={user} alt="" />
+                                </AvatarFallback>
+                            </Avatar>
+                            <FormField
+                                control={form.control}
+                                name="userImg"
+                                render={({ field }) => (
+                                    <FormItem className="z-20 relative">
+                                        <FormLabel className="cursor-pointer flex absolute -right-14 bg-gray-800/60 p-2 text-white rounded-full -top-12">
+                                            <FaCamera size={16} />
+                                        </FormLabel>
+                                        <FormControl className="hidden">
+                                            <Input type="file" {...fileRef} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
                         <FormField
                             control={form.control}
                             name="name"
