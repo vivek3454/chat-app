@@ -19,6 +19,10 @@ import { MdLogout } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import BackDropLoader from '../loaders/BackDropLoader';
 import Profile from '../specific/Profile';
+import useGetApiReq from "@/hooks/useGetApiReq";
+import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { userNotExists } from "@/redux/reducers/auth";
 
 const Search = lazy(() => import('../specific/Search'))
 const Notifications = lazy(() => import('../specific/Notifications'))
@@ -33,6 +37,19 @@ const Header = () => {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { res, fetchData, isLoading } = useGetApiReq();
+
+  const handelLogout = async () => {
+    fetchData("/user/logout");
+  }
+
+  useEffect(() => {
+    if (res?.status === 200 || res?.status === 201) {
+      dispatch(userNotExists())
+      toast.success(res?.data?.message)
+    }
+  }, [res])
 
   const toggleSheet = () => {
     setSheetOpen(!isSheetOpen);
@@ -112,7 +129,7 @@ const Header = () => {
             <NavMenuItem
               icon={<MdLogout className='text-lg sm:text-2xl' />}
               title="Logout"
-              onClick={() => { }}
+              onClick={handelLogout}
             />
           </NavigationMenuList>
         </NavigationMenu>
