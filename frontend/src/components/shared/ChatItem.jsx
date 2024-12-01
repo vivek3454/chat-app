@@ -3,6 +3,8 @@ import { Separator } from "@/components/ui/separator"
 import { memo } from "react"
 import { Link } from "react-router-dom"
 import group from "@/assets/group.png"
+import { useDispatch } from "react-redux"
+import { handleOpenClose } from "@/redux/reducers/chat"
 
 
 const ChatItem = ({
@@ -17,8 +19,9 @@ const ChatItem = ({
     index = 0,
     handleDeleteChat
 }) => {
+    const dispatch = useDispatch();
     return (
-        <Link to={`/chat/${_id}`} onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}>
+        <Link onClick={() => dispatch(handleOpenClose())} to={`/chat/${_id}`} onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}>
             <div className={`hover:bg-gray-50 cursor-pointer ${sameSender && "bg-gray-50"}`}>
                 <div className="flex gap-4 p-2">
                     <span className="relative">

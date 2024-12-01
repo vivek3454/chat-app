@@ -54,7 +54,7 @@ function App() {
   ) : (
     <>
 
-      {isLoading && <LayoutLoader />}
+      {/* {isLoading && <LayoutLoader />} */}
       <ErrorModal />
 
       <Router>

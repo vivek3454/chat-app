@@ -14,7 +14,7 @@ const Chatlist = ({
   ]
 }) => {
   return (
-    <div>
+    <div className=' sm:block'>
       {chats?.map((chat, i) => (
         <ChatItem
           key={i}
