@@ -7,6 +7,8 @@ import Chatlist from "../specific/Chatlist"
 import { useMyChatsQuery } from "@/redux/api/api"
 import { useDispatch, useSelector } from "react-redux"
 import ChatSkeleton from "../skeleton/ChatSkeleton"
+import { useErrors } from "@/hooks/hooks"
+import DataNotFound from "../shared/DataNotFound"
 
 const AppLayout = () => (WrappedComponent) => {
     return (props) => {
@@ -14,7 +16,7 @@ const AppLayout = () => (WrappedComponent) => {
         const { isOpen } = useSelector((state) => state.chat);
         console.log("isOpen", isOpen);
 
-
+        useErrors([{ isError, error }]);
 
         const params = useParams();
         const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
@@ -28,9 +30,13 @@ const AppLayout = () => (WrappedComponent) => {
                 <Header />
                 <section className="grid grid-cols-1 sm:grid-cols-[40%_60%] md:grid-cols-[30%_70%] h-[calc(100vh-4rem)]">
                     <div className={`${isOpen ? "hidden sm:block" : "block"}`}>
-                        {isLoading ?
+                        {data?.chats.length > 0 && <Chatlist chats={data?.chats} chatId={params?.chatId} />}
+                        {data?.chats.length === 0 && isLoading &&
                             <ChatSkeleton />
-                            : <Chatlist chats={data?.chats} chatId={params?.chatId} />
+                        }
+
+                        {data?.chats.length === 0 && !isLoading &&
+                            <DataNotFound name="Chats" />
                         }
                     </div>
                     <div className={`bg-gray-100 ${isOpen ? "block" : "hidden"} sm:block`}>
