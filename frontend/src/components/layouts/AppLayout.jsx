@@ -16,11 +16,11 @@ const AppLayout = () => (WrappedComponent) => {
         const { isOpen } = useSelector((state) => state.chat);
         console.log("isOpen", isOpen);
 
-        useErrors([{ isError, error }]);
-
+        
         const params = useParams();
         const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
-
+        
+        useErrors([{ isError, error }]);
         console.log("chats", data);
 
 
@@ -31,6 +31,7 @@ const AppLayout = () => (WrappedComponent) => {
                 <section className="grid grid-cols-1 sm:grid-cols-[40%_60%] md:grid-cols-[30%_70%] h-[calc(100vh-4rem)]">
                     <div className={`${isOpen ? "hidden sm:block" : "block"}`}>
                         {data?.chats.length > 0 && <Chatlist chats={data?.chats} chatId={params?.chatId} />}
+
                         {data?.chats.length === 0 && isLoading &&
                             <ChatSkeleton />
                         }
