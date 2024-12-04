@@ -33,10 +33,6 @@ const Search = ({ isSearchOpen, setIsSearchOpen }) => {
         };
     }, [searchInput])
 
-    console.log("isloading", isLoading);
-    console.log("isUninitialized", isUninitialized);
-
-
 
     return (
         <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
