@@ -13,8 +13,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Navigate } from "react-router-dom"
-import { toast } from "sonner"
-
+import { toast } from "react-toastify"
 
 const isAdmin = true;
 const AdminLogin = () => {

@@ -3,7 +3,7 @@ import { axiosInstance } from "../utils/axiosInstance";
 import { useDispatch } from "react-redux";
 import { handleErrorModal, handleUnautorizedModalOpen } from "@/redux/reducers/error";
 import { handleLoading } from "@/redux/reducers/loading";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 const usePostApiReq = () => {
     const [res, setRes] = useState(null);

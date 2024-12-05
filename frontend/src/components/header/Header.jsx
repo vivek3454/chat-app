@@ -20,9 +20,9 @@ import { useNavigate } from 'react-router-dom';
 import BackDropLoader from '../loaders/BackDropLoader';
 import Profile from '../specific/Profile';
 import useGetApiReq from "@/hooks/useGetApiReq";
-import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { userNotExists } from "@/redux/reducers/auth";
+import { toast } from "react-toastify";
 
 const Search = lazy(() => import('../specific/Search'))
 const Notifications = lazy(() => import('../specific/Notifications'))

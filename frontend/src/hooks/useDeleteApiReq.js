@@ -3,7 +3,7 @@ import { axiosInstance } from "../utils/axiosInstance";
 import { useDispatch } from "react-redux";
 import { handleErrorModal, handleUnautorizedModalOpen } from "@/store/slices/errorSlice";
 import { handleLoading } from "@/store/slices/loadingSlice";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 const useDeleteApiReq = () => {
     const [res, setRes] = useState(null);

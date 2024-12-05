@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 const useErrors = (errors = []) => {
     useEffect(() => {
         errors.forEach(({ isError, error, fallback }) => {
@@ -25,18 +25,21 @@ const useAsyncMutation = (mutatationHook) => {
             const res = await mutate(...args);
 
             if (res.data) {
-                toast.success(res.data.message || "Updated data successfully", {
-                    id: toastId,
-                });
+                toast.update(toastId, { render: res.data.message || "Updated data successfully", type: "success", isLoading: false });
+                // toast.success(res.data.message || "Updated data successfully", {
+                //     toastId: toastId,
+                // });
                 setData(res.data);
             } else {
-                toast.error(res?.error?.data?.message || "Something went wrong", {
-                    id: toastId,
-                });
+                toast.update(toastId, { render: res?.error?.data?.message || "Something went wrong", type: "error", isLoading: false });
+                // toast.error(res?.error?.data?.message || "Something went wrong", {
+                //     toastId: toastId,
+                // });
             }
         } catch (error) {
             console.log(error);
-            toast.error("Something went wrong", { id: toastId });
+            // toast.error("Something went wrong", { toastId: toastId });
+            toast.update(toastId, { render: "Something went wrong", type: "error", isLoading: false });
         } finally {
             setIsLoading(false);
         }

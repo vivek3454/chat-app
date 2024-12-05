@@ -11,6 +11,7 @@ import { userExists, userNotExists } from './redux/reducers/auth';
 import { handleErrorModal } from './redux/reducers/error';
 import ErrorModal from './components/specific/ErrorModal';
 import useGetApiReq from './hooks/useGetApiReq';
+import { ToastContainer } from 'react-toastify';
 
 const Home = lazy(() => import('./pages/home/Home'))
 const Login = lazy(() => import('./pages/login/Login'))
@@ -23,7 +24,7 @@ const Dashboard = lazy(() => import('./pages/admin/Dashboard'))
 const ChatManagement = lazy(() => import('./pages/admin/ChatManagement'))
 const UserManagement = lazy(() => import('./pages/admin/UserManagement'))
 const Messages = lazy(() => import('./pages/admin/Messages'))
-
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { user, loader } = useSelector((state) => state.auth);
@@ -84,11 +85,24 @@ function App() {
         </Suspense>
       </Router>
 
-      <Toaster
+      {/* <Toaster
         position="top-center"
         expand={true}
         richColors
         closeButton
+      /> */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition="Bounce"
       />
     </>
   )
