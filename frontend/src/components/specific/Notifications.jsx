@@ -8,12 +8,18 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "../ui/button"
-import { useGetNotificationsQuery } from "@/redux/api/api";
-import { useErrors } from "@/hooks/hooks";
+import { useAcceptFriendRequestMutation, useGetNotificationsQuery } from "@/redux/api/api";
+import { useAsyncMutation, useErrors } from "@/hooks/hooks";
 import Spinner from "../shared/Spinner";
 
 const Notifications = ({ children }) => {
     const { isLoading, data, error, isError } = useGetNotificationsQuery();
+
+    const [acceptRequest] = useAsyncMutation(useAcceptFriendRequestMutation);
+
+    const friendRequestHandler = async ({ _id, accept }) => {
+        await acceptRequest("Accepting...", { requestId: _id, accept });
+    };
 
     useErrors([{ error, isError }]);
 
@@ -30,7 +36,7 @@ const Notifications = ({ children }) => {
                             data?.allRequests?.map(({ sender, _id }) => (
                                 <div key={_id}>
                                     <DropdownMenuSeparator />
-                                    <NotificationComp sender={sender} />
+                                    <NotificationComp handler={friendRequestHandler} sender={sender} />
                                 </div>
                             ))
                         ) : (
@@ -44,7 +50,7 @@ const Notifications = ({ children }) => {
 }
 
 
-const NotificationComp = ({ sender }) => {
+const NotificationComp = ({ sender, handler }) => {
     return (
         <div className="p-2">
             <div className="flex justify-between items-center w-full">
@@ -56,7 +62,7 @@ const NotificationComp = ({ sender }) => {
                     <h2 className="text-lg">{sender?.name}</h2>
                 </div>
                 <div className="flex justify-center gap-2 items-center">
-                    <Button variant="chat">Accept</Button>
+                    <Button onClick={() => handler({ _id: sender?._id, accept: true })} variant="chat">Accept</Button>
                     <Button variant="destructive">Reject</Button>
                 </div>
             </div>

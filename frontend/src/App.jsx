@@ -1,17 +1,16 @@
-import './App.css'
+import './App.css';
 
-import { Toaster } from './components/ui/sonner'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense, lazy, useEffect } from 'react';
-import ProtectecRoute from './components/auth/ProtectecRoute';
-import LayoutLoader from './components/loaders/LayoutLoader';
-import { axiosInstance } from './utils/axiosInstance';
 import { useDispatch, useSelector } from 'react-redux';
-import { userExists, userNotExists } from './redux/reducers/auth';
-import { handleErrorModal } from './redux/reducers/error';
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ProtectRoute from './components/auth/ProtectRoute';
+import LayoutLoader from './components/loaders/LayoutLoader';
 import ErrorModal from './components/specific/ErrorModal';
 import useGetApiReq from './hooks/useGetApiReq';
-import { ToastContainer } from 'react-toastify';
+import { userExists, userNotExists } from './redux/reducers/auth';
+import { SocketProvider } from './socket';
 
 const Home = lazy(() => import('./pages/home/Home'))
 const Login = lazy(() => import('./pages/login/Login'))
@@ -24,7 +23,6 @@ const Dashboard = lazy(() => import('./pages/admin/Dashboard'))
 const ChatManagement = lazy(() => import('./pages/admin/ChatManagement'))
 const UserManagement = lazy(() => import('./pages/admin/UserManagement'))
 const Messages = lazy(() => import('./pages/admin/Messages'))
-import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { user, loader } = useSelector((state) => state.auth);
@@ -61,16 +59,20 @@ function App() {
       <Router>
         <Suspense fallback={<LayoutLoader />}>
           <Routes>
-            <Route element={<ProtectecRoute user={user} />}>
+            <Route element={
+              <SocketProvider>
+                <ProtectRoute user={user} />
+              </SocketProvider>
+            }>
               <Route path='/' element={<Home />} />
               <Route path='/chat/:chatId' element={<Chat />} />
               <Route path='/groups-management' element={<GroupsManagement />} />
             </Route>
 
             <Route path='/login' element={
-              <ProtectecRoute user={!user} redirect='/'>
+              <ProtectRoute user={!user} redirect='/'>
                 <Login />
-              </ProtectecRoute>
+              </ProtectRoute>
             } />
 
             {/* Admin Routes */}
@@ -92,7 +94,7 @@ function App() {
         closeButton
       /> */}
       <ToastContainer
-        position="top-right"
+        position="top-center"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}

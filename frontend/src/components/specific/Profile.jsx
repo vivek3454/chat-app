@@ -24,7 +24,7 @@ const Profile = ({ isProfileOpen, setIsProfileOpen }) => {
             <SheetContent side="right" className="p-4 flex flex-col justify-between">
                 <div className="mt-8">
                     <Avatar className="w-36 h-36 mx-auto rounded-full">
-                        <AvatarImage className="relative z-10" src={user?.avatar?.url} />
+                        <AvatarImage className="relative z-10" src={user?.avatar?.url || ""} />
                         <AvatarFallback className="relative z-10">U</AvatarFallback>
                     </Avatar>
                     <div className="flex items-start gap-5 mt-3">
