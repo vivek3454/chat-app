@@ -17,6 +17,8 @@ import { Message } from "./models/message.js";
 import { getSockets } from "./lib/helper.js";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
+import { NEW_MESSAGE } from "./constants/events.js";
+import { socketAuthenticator } from "./middlewares/auth.js";
 
 dotenv.config({
     path: "./.env",
@@ -63,6 +65,7 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
+    console.log("connected");
     const user = socket.user;
     userSocketIDs.set(user._id.toString(), socket.id);
 
@@ -99,6 +102,8 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
+        console.log("disconnected");
+
         userSocketIDs.delete(user._id.toString());
     });
 });

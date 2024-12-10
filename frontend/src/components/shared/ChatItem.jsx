@@ -37,7 +37,7 @@ const ChatItem = ({
                         {isOnline && <div className="w-3 h-3 rounded-full z-20 absolute bottom-2 right-0 bg-green-400"></div>}
                     </span>
                     <div>
-                        <h2 className="text-lg font-semibold">Chat 1</h2>
+                        <h2 className="text-lg font-semibold">{name}</h2>
                         <p className="text-sm text-gray-400 line-clamp-1">new message</p>
                     </div>
                     <div className="ml-auto flex flex-col justify-between items-end">

@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux"
 import ChatSkeleton from "../skeleton/ChatSkeleton"
 import { useErrors } from "@/hooks/hooks"
 import DataNotFound from "../shared/DataNotFound"
+import { getSocket } from "@/socket"
 
 const AppLayout = () => (WrappedComponent) => {
     return (props) => {
@@ -16,12 +17,15 @@ const AppLayout = () => (WrappedComponent) => {
         const { isOpen } = useSelector((state) => state.chat);
         console.log("isOpen", isOpen);
 
-        
+
         const params = useParams();
         const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
-        
+
         useErrors([{ isError, error }]);
         console.log("chats", data);
+
+        const socket = getSocket();
+        console.log("socket", socket);
 
 
         return (

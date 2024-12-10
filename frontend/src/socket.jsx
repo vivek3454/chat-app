@@ -1,6 +1,6 @@
 import { createContext, useMemo, useContext } from "react";
 import io from "socket.io-client";
-const server = import.meta.env.VITE_BACKEND_URL;
+const server = import.meta.env.VITE_SOCKET_URL;
 const SocketContext = createContext();
 
 const getSocket = () => useContext(SocketContext);

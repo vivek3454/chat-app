@@ -18,14 +18,15 @@ const Chatlist = ({
       {chats?.map((chat, i) => (
         <ChatItem
           key={i}
-          _id={chat}
-          sameSender={chatId === chat}
+          _id={chat?._id}
+          sameSender={chatId === chat?._id}
           newMessageAlert={{
-            chatId:chat,
-            count:chat
+            chatId:chat?._id,
+            count:2
           }}
-          isOnline={chatId === chat}
-          groupChat={chatId === chat}
+          name={chat?.name}
+          isOnline={chatId === chat?._id}
+          groupChat={chat?.groupChat}
         />
       ))}
     </div>
