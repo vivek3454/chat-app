@@ -17,7 +17,7 @@ import { Message } from "./models/message.js";
 import { getSockets } from "./lib/helper.js";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
-import { NEW_MESSAGE } from "./constants/events.js";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
 import { socketAuthenticator } from "./middlewares/auth.js";
 
 dotenv.config({
@@ -70,6 +70,9 @@ io.on("connection", (socket) => {
     userSocketIDs.set(user._id.toString(), socket.id);
 
     socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
+
+        console.log("message",message);
+        
         const messageForRealTime = {
             content: message,
             _id: uuid(),

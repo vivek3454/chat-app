@@ -12,9 +12,27 @@ import {
 } from "@/components/ui/dropdown-menu"
 import MessageComp from "@/components/shared/MessageComp";
 import ChatHeader from "@/components/specific/ChatHeader";
+import { getSocket } from "@/socket";
+import { useState } from "react";
+import { NEW_MESSAGE } from "@/constants/events";
+import { useChatDetailsQuery } from "@/redux/api/api";
 
 
-const Chat = () => {
+const Chat = ({ chatId }) => {
+  const socket = getSocket();
+
+  const [message, setMessage] = useState("");
+
+  const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
+  const members = chatDetails?.data?.chat?.members;
+
+  console.log("message", message);
+
+  const handleSendMessage = () => {
+    socket.emit(NEW_MESSAGE, { chatId, members, message });
+    setMessage("");
+  }
+
   return (
     <div className="h-[calc(100vh-4rem)]">
       <div className="h-[89%]">
@@ -23,7 +41,7 @@ const Chat = () => {
           <MessageComp />
         </div>
       </div>
-      <div className="mt-auto flex gap-3 bg-white p-2 h-[11%]">
+      <div className="mt-auto flex items-start gap-3 bg-white p-2 h-[11%]">
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Button variant="secondary">
@@ -40,8 +58,8 @@ const Chat = () => {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Input placeholder="Type Message Here..." />
-        <Button variant="chat">
+        <Input onChange={(e) => setMessage(e.target.value)} value={message} placeholder="Type Message Here..." />
+        <Button disabled={!message.trim()} onClick={handleSendMessage} variant="chat">
           <MdSend />
         </Button>
       </div>

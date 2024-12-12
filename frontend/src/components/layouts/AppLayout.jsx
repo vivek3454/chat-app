@@ -24,6 +24,8 @@ const AppLayout = () => (WrappedComponent) => {
         useErrors([{ isError, error }]);
         console.log("chats", data);
 
+        const chatId=params?.chatId
+
         const socket = getSocket();
         console.log("socket", socket);
 
@@ -34,7 +36,7 @@ const AppLayout = () => (WrappedComponent) => {
                 <Header />
                 <section className="grid grid-cols-1 sm:grid-cols-[40%_60%] md:grid-cols-[30%_70%] h-[calc(100vh-4rem)]">
                     <div className={`${isOpen ? "hidden sm:block" : "block"}`}>
-                        {data?.chats.length > 0 && <Chatlist chats={data?.chats} chatId={params?.chatId} />}
+                        {data?.chats.length > 0 && <Chatlist chats={data?.chats} chatId={chatId} />}
 
                         {data?.chats.length === 0 && isLoading &&
                             <ChatSkeleton />
@@ -45,7 +47,7 @@ const AppLayout = () => (WrappedComponent) => {
                         }
                     </div>
                     <div className={`bg-gray-100 ${isOpen ? "block" : "hidden"} sm:block`}>
-                        <WrappedComponent {...props} />
+                        <WrappedComponent {...props} chatId={chatId} />
                     </div>
                 </section>
             </>
