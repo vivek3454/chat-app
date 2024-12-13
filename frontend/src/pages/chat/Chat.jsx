@@ -13,20 +13,37 @@ import {
 import MessageComp from "@/components/shared/MessageComp";
 import ChatHeader from "@/components/specific/ChatHeader";
 import { getSocket } from "@/socket";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { NEW_MESSAGE } from "@/constants/events";
 import { useChatDetailsQuery } from "@/redux/api/api";
+import { useSocketEvents } from "@/hooks/hooks";
 
 
-const Chat = ({ chatId }) => {
+const Chat = ({ chatId, user }) => {
   const socket = getSocket();
 
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
 
   const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
   const members = chatDetails?.data?.chat?.members;
 
   console.log("message", message);
+
+  const newMessagesListener = useCallback(
+    (data) => {
+      if (data.chatId !== chatId) return;
+
+      setMessages((prev) => [...prev, data.message]);
+    },
+    [chatId]
+  );
+
+  const eventHandler = {
+    [NEW_MESSAGE]: newMessagesListener,
+  };
+
+  useSocketEvents(socket, eventHandler);
 
   const handleSendMessage = () => {
     socket.emit(NEW_MESSAGE, { chatId, members, message });
@@ -38,7 +55,9 @@ const Chat = ({ chatId }) => {
       <div className="h-[89%]">
         <ChatHeader />
         <div className="p-2">
-          <MessageComp />
+          {messages.map((message) => (
+            <MessageComp key={message._id} message={message} user={user} />
+          ))}
         </div>
       </div>
       <div className="mt-auto flex items-start gap-3 bg-white p-2 h-[11%]">

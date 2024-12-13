@@ -15,7 +15,8 @@ const AppLayout = () => (WrappedComponent) => {
     return (props) => {
         const dispatch = useDispatch();
         const { isOpen } = useSelector((state) => state.chat);
-        console.log("isOpen", isOpen);
+        const { user } = useSelector((state) => state.auth);
+        console.log("user", user);
 
 
         const params = useParams();
@@ -47,7 +48,7 @@ const AppLayout = () => (WrappedComponent) => {
                         }
                     </div>
                     <div className={`bg-gray-100 ${isOpen ? "block" : "hidden"} sm:block`}>
-                        <WrappedComponent {...props} chatId={chatId} />
+                        <WrappedComponent {...props} chatId={chatId} user={user} />
                     </div>
                 </section>
             </>
