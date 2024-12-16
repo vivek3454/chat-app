@@ -1,24 +1,30 @@
+import group from "@/assets/group.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Phone, Video } from 'lucide-react';
-import { Button } from "../ui/button";
-import { FaArrowLeft } from "react-icons/fa";
-import { useDispatch } from "react-redux";
 import { handleOpenClose } from "@/redux/reducers/chat";
+import { Phone, Video } from 'lucide-react';
 import { SlArrowLeft } from "react-icons/sl";
+import { useDispatch } from "react-redux";
+import { Button } from "../ui/button";
 
-const ChatHeader = () => {
+const ChatHeader = ({ chatDetails }) => {
+    const { groupChat, name, members =[] } = chatDetails || {};
     const dispatch = useDispatch();
 
     return (
         <div className="w-full h-[70px] flex p-4 justify-between items-center border-b bg-white">
             <div className="flex items-center gap-2">
                 <SlArrowLeft onClick={() => dispatch(handleOpenClose())} className="block sm:hidden cursor-pointer text-lg" />
-                <Avatar>
-                    <AvatarImage className="relative z-10" src="https://github.com/shadcn.png" />
-                    <AvatarFallback className="relative z-10">U</AvatarFallback>
-                </Avatar>
+                {groupChat ?
+                    <Avatar>
+                        <AvatarImage className="relative z-10" src={group} />
+                        <AvatarFallback className="relative z-10">U</AvatarFallback>
+                    </Avatar>
+                    : <Avatar>
+                        <AvatarImage className="relative z-10" src={members[0]?.avatar} />
+                        <AvatarFallback className="relative z-10">U</AvatarFallback>
+                    </Avatar>}
                 <div className="flex flex-col">
-                    <span className="font-medium">name</span>
+                    <span className="font-medium">{groupChat ? name : name?.split("-")[0]}</span>
                     <span className="text-xs">Active 2 mins ago</span>
                 </div>
             </div>

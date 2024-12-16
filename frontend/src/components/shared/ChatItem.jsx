@@ -31,7 +31,7 @@ const ChatItem = ({
                                 <AvatarFallback className="relative z-10">U</AvatarFallback>
                             </Avatar>
                             : <Avatar>
-                                <AvatarImage className="relative z-10" src="https://github.com/shadcn.png" />
+                                <AvatarImage className="relative z-10" src={avatar[0]}/>
                                 <AvatarFallback className="relative z-10">U</AvatarFallback>
                             </Avatar>}
                         {isOnline && <div className="w-3 h-3 rounded-full z-20 absolute bottom-2 right-0 bg-green-400"></div>}

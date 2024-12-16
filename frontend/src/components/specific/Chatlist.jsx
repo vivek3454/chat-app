@@ -24,6 +24,7 @@ const Chatlist = ({
             chatId:chat?._id,
             count:2
           }}
+          avatar={chat?.avatar}
           name={chat?.name}
           isOnline={chatId === chat?._id}
           groupChat={chat?.groupChat}

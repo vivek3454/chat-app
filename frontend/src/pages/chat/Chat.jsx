@@ -15,8 +15,8 @@ import ChatHeader from "@/components/specific/ChatHeader";
 import { getSocket } from "@/socket";
 import { useCallback, useState } from "react";
 import { NEW_MESSAGE } from "@/constants/events";
-import { useChatDetailsQuery } from "@/redux/api/api";
-import { useSocketEvents } from "@/hooks/hooks";
+import { useChatDetailsQuery, useGetMessagesQuery } from "@/redux/api/api";
+import { useErrors, useSocketEvents } from "@/hooks/hooks";
 
 
 const Chat = ({ chatId, user }) => {
@@ -24,11 +24,15 @@ const Chat = ({ chatId, user }) => {
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [page, setPage] = useState(1);
 
-  const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
-  const members = chatDetails?.data?.chat?.members;
+  const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId, populate: true });
+  const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
+
+  const members = chatDetails?.data?.chat?.members?.map((member) => member?._id);
 
   console.log("message", message);
+  console.log("members", members);
 
   const newMessagesListener = useCallback(
     (data) => {
@@ -50,17 +54,26 @@ const Chat = ({ chatId, user }) => {
     setMessage("");
   }
 
+  const errors = [
+    { isError: chatDetails.isError, error: chatDetails.error },
+    { isError: oldMessagesChunk.isError, error: oldMessagesChunk.error },
+  ];
+  let oldMessages = oldMessagesChunk?.data?.messages || [];
+  const allMessages = [...oldMessages, ...messages];
+
+  useErrors(errors);
+
   return (
-    <div className="h-[calc(100vh-4rem)]">
+    <div className="h-[calc(100vh-4rem)] relative">
       <div className="h-[89%]">
-        <ChatHeader />
-        <div className="p-2">
-          {messages.map((message) => (
+        <ChatHeader chatDetails={chatDetails?.data?.chat} />
+        <div className="p-2 bg-blue- h-[87%] overflow-y-auto">
+          {allMessages.map((message) => (
             <MessageComp key={message._id} message={message} user={user} />
           ))}
         </div>
       </div>
-      <div className="mt-auto flex items-start gap-3 bg-white p-2 h-[11%]">
+      <div className="mt-auto flex items-start gap-3 bg-white z-30 p-2 h-[11%]">
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Button variant="secondary">
