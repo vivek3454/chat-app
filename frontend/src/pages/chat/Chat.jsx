@@ -1,23 +1,17 @@
-import AppLayout from "@/components/layouts/AppLayout"
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MdOutlineAttachFile, MdSend } from "react-icons/md";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { useInfiniteScrollTop } from "6pp";
+import AppLayout from "@/components/layouts/AppLayout";
 import MessageComp from "@/components/shared/MessageComp";
 import ChatHeader from "@/components/specific/ChatHeader";
+import FileMenu from "@/components/specific/FileMenu";
+import { Button } from "@/components/ui/button";
+
+import { Input } from "@/components/ui/input";
+import { NEW_MESSAGE } from "@/constants/events";
+import { useErrors, useSocketEvents } from "@/hooks/hooks";
+import { useChatDetailsQuery, useGetMessagesQuery } from "@/redux/api/api";
 import { getSocket } from "@/socket";
 import { useCallback, useRef, useState } from "react";
-import { NEW_MESSAGE } from "@/constants/events";
-import { useChatDetailsQuery, useGetMessagesQuery } from "@/redux/api/api";
-import { useErrors, useSocketEvents } from "@/hooks/hooks";
-import { useInfiniteScrollTop } from "6pp";
+import { MdSend } from "react-icons/md";
 
 
 const Chat = ({ chatId, user }) => {
@@ -57,7 +51,7 @@ const Chat = ({ chatId, user }) => {
   }
 
   // let oldMessages = oldMessagesChunk?.data?.messages || [];
-  
+
   const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
     containerRef,
     oldMessagesChunk.data?.totalPages,
@@ -67,7 +61,7 @@ const Chat = ({ chatId, user }) => {
   );
 
   const allMessages = [...oldMessages, ...messages];
-  
+
   const errors = [
     { isError: chatDetails.isError, error: chatDetails.error },
     { isError: oldMessagesChunk.isError, error: oldMessagesChunk.error },
@@ -86,21 +80,7 @@ const Chat = ({ chatId, user }) => {
         </div>
       </div>
       <div className="mt-auto flex items-start gap-3 bg-white z-30 p-2 h-[11%]">
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button variant="secondary">
-              <MdOutlineAttachFile />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <FileMenu />
 
         <Input onChange={(e) => setMessage(e.target.value)} value={message} placeholder="Type Message Here..." />
         <Button disabled={!message.trim()} onClick={handleSendMessage} variant="chat">
