@@ -18,9 +18,10 @@ import { Input } from "../ui/input";
 import { FaFile, FaFileVideo } from "react-icons/fa";
 import { useRef } from "react";
 import { toast } from "react-toastify";
+import { useSendAttachmentsMutation } from "@/redux/api/api";
 
 
-const FileMenu = () => {
+const FileMenu = ({ chatId }) => {
     const imageRef = useRef(null);
     const audioRef = useRef(null);
     const videoRef = useRef(null);
@@ -30,6 +31,8 @@ const FileMenu = () => {
     const selectAudio = () => audioRef.current?.click();
     const selectVideo = () => videoRef.current?.click();
     const selectFile = () => fileRef.current?.click();
+
+    const [sendAttachments] = useSendAttachmentsMutation();
 
     const fileChangeHandler = async (e, key) => {
         const files = Array.from(e.target.files);
@@ -51,12 +54,13 @@ const FileMenu = () => {
 
             const res = await sendAttachments(myForm);
 
-            if (res.data) toast.success(`${key} sent successfully`, { toastId });
-            else toast.error(`Failed to send ${key}`, { toastId });
+            if (res.data) toast.update(toastId, { render: `${key} sent successfully`, type: "success", isLoading: false });
+            else toast.update(toastId, { render: `Failed to send ${key}`, type: "error", isLoading: false });
 
             // Fetching Here
         } catch (error) {
-            toast.error(error, { toastId });
+            console.log("error", error);
+            toast.update(toastId, { render: error, type: "error", isLoading: false });
         } finally {
             // setUploadingLoader(false);
         }
@@ -70,7 +74,7 @@ const FileMenu = () => {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuItem onClick={selectImage}>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={selectImage}>
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger className="w-full">
@@ -96,7 +100,7 @@ const FileMenu = () => {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={selectAudio}>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={selectAudio}>
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger className="w-full">
@@ -122,7 +126,7 @@ const FileMenu = () => {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={selectVideo}>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={selectVideo}>
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger className="w-full">
@@ -148,7 +152,7 @@ const FileMenu = () => {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={selectFile}>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={selectFile}>
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger className="w-full">

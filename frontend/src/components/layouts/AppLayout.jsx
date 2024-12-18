@@ -22,13 +22,13 @@ const AppLayout = () => (WrappedComponent) => {
         const params = useParams();
         const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
 
-        console.log("error",error);
-        
+        console.log("error", error);
+
 
         useErrors([{ isError, error }]);
         console.log("chats", data);
 
-        const chatId=params?.chatId
+        const chatId = params?.chatId
 
         const socket = getSocket();
         console.log("socket", socket);

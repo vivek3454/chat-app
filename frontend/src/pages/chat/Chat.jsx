@@ -80,7 +80,7 @@ const Chat = ({ chatId, user }) => {
         </div>
       </div>
       <div className="mt-auto flex items-start gap-3 bg-white z-30 p-2 h-[11%]">
-        <FileMenu />
+        <FileMenu chatId={chatId} />
 
         <Input onChange={(e) => setMessage(e.target.value)} value={message} placeholder="Type Message Here..." />
         <Button disabled={!message.trim()} onClick={handleSendMessage} variant="chat">

@@ -27,7 +27,7 @@ const fileFormat = (url) => {
     }
 }
 
-const transformImage = (url,width=100) => {
+const transformImage = (url, width = 100) => {
     return url;
 }
 

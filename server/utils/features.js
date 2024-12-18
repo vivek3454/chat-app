@@ -32,7 +32,6 @@ const sendToken = (res, user, code, message) => {
 
 const emitEvent = (req, event, users, data) => {
     console.log("event", event);
-
 };
 
 const uploadFilesToCloudinary = async (files = []) => {

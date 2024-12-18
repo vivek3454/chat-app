@@ -11,6 +11,7 @@ const MessageComp = ({ message, user }) => {
     const sameSender = sender?._id === user?._id
     // const timeAgo = format(new Date(), "hh:mm");
     const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+    
 
     return (
         <div className={`chat ${sameSender ? "chat-end" : "chat-start"}`}>
@@ -20,6 +21,8 @@ const MessageComp = ({ message, user }) => {
             </div>
             <div className="chat-bubble bg-white">
                 {attachments.map((attachment, i) => {
+    console.log("attachment: " , attachment);
+
                     const fileType = fileFormat(attachment?.url)
                     return (
                         <a
@@ -28,7 +31,7 @@ const MessageComp = ({ message, user }) => {
                             target="_blank"
                             download
                         >
-                            {RenderAttachment(fileType, attachment?.url)}
+                            {RenderAttachment({fileType, url:attachment?.url})}
                         </a>
                     )
                 })}

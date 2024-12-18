@@ -1,5 +1,6 @@
 import {
     ALERT,
+    NEW_MESSAGE,
     // NEW_MESSAGE,
     NEW_MESSAGE_ALERT,
     REFETCH_CHATS,
@@ -260,6 +261,7 @@ const sendAttachments = TryCatch(async (req, res, next) => {
     });
 
     emitEvent(req, NEW_MESSAGE_ALERT, chat.members, { chatId });
+console.log("working");
 
     return res.status(200).json({
         success: true,
