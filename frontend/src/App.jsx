@@ -11,6 +11,7 @@ import ErrorModal from './components/specific/ErrorModal';
 import useGetApiReq from './hooks/useGetApiReq';
 import { userExists, userNotExists } from './redux/reducers/auth';
 import { SocketProvider } from './socket';
+import error from './redux/reducers/error';
 
 const Home = lazy(() => import('./pages/home/Home'))
 const Login = lazy(() => import('./pages/login/Login'))
@@ -28,8 +29,11 @@ function App() {
   const { user, loader } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
+  console.log("user", user);
+
+
   const { isLoading } = useSelector((state) => state?.loading);
-  const { res, fetchData } = useGetApiReq();
+  const { res, fetchData, error } = useGetApiReq();
 
   useEffect(() => {
     (async () => {
@@ -42,10 +46,10 @@ function App() {
     if (res?.status === 200 || res?.status === 201) {
       dispatch(userExists(res?.data?.user))
     }
-    else {
+    if (error) {
       dispatch(userNotExists());
     }
-  }, [res])
+  }, [res,error])
 
 
   return loader ? (

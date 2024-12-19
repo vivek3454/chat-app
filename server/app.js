@@ -51,6 +51,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors(corsOptions));
 
+app.set("io", io);
+
 // createUser(5);
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/chat", chatRouter)
@@ -71,8 +73,8 @@ io.on("connection", (socket) => {
 
     socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
 
-        console.log("message",message);
-        
+        console.log("message", message);
+
         const messageForRealTime = {
             content: message,
             _id: uuid(),

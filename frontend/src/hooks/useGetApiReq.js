@@ -3,10 +3,12 @@ import { axiosInstance } from "../utils/axiosInstance";
 import { useDispatch } from "react-redux";
 import { handleErrorModal } from "@/redux/reducers/error";
 import { handleLoading } from "@/redux/reducers/loading";
+import { toast } from "react-toastify";
 
 const useGetApiReq = () => {
     const [res, setRes] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null)
 
     const dispatch = useDispatch();
 
@@ -19,14 +21,16 @@ const useGetApiReq = () => {
                 setRes(response);
             }
         } catch (error) {
-            await dispatch(handleErrorModal({ isOpen: true, message: error.response?.data?.message || "An error occurred.", isLogoutBtn: true }));
+            setError(error);
+            toast.error(error.response?.data?.message || "An error occurred.")
+            // await dispatch(handleErrorModal({ isOpen: true, message: error.response?.data?.message || "An error occurred.", isLogoutBtn: true }));
         } finally {
             setIsLoading(false);
             await dispatch(handleLoading(false));
         }
     };
 
-    return { res, isLoading, fetchData };
+    return { res, isLoading, fetchData ,error};
 
 
 };

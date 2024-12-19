@@ -4,14 +4,14 @@ import React, { memo } from 'react'
 import RenderAttachment from './RenderAttachment';
 
 const MessageComp = ({ message, user }) => {
-    console.log("message", message);
+    // console.log("message", message);
 
     const { _id, sender, content, attachments = [], createdAt } = message;
     // const attachments = []
     const sameSender = sender?._id === user?._id
     // const timeAgo = format(new Date(), "hh:mm");
-    const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
-    
+    const timeAgo = createdAt ? formatDistanceToNow(new Date(createdAt), { addSuffix: true }) : formatDistanceToNow(new Date(), { addSuffix: true });
+
 
     return (
         <div className={`chat ${sameSender ? "chat-end" : "chat-start"}`}>
@@ -19,9 +19,9 @@ const MessageComp = ({ message, user }) => {
                 {sameSender ? user?.name : sender?.name}
                 <time className="text-xs opacity-50 ml-2">{timeAgo}</time>
             </div>
-            <div className="chat-bubble bg-white">
+            <div className="chat-bubble bg-white rounded-md mt-1">
                 {attachments.map((attachment, i) => {
-    console.log("attachment: " , attachment);
+                    // console.log("attachment: ", attachment);
 
                     const fileType = fileFormat(attachment?.url)
                     return (
@@ -31,7 +31,7 @@ const MessageComp = ({ message, user }) => {
                             target="_blank"
                             download
                         >
-                            {RenderAttachment({fileType, url:attachment?.url})}
+                            {RenderAttachment({ fileType, url: attachment?.url })}
                         </a>
                     )
                 })}

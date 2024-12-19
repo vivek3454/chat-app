@@ -261,7 +261,6 @@ const sendAttachments = TryCatch(async (req, res, next) => {
     });
 
     emitEvent(req, NEW_MESSAGE_ALERT, chat.members, { chatId });
-console.log("working");
 
     return res.status(200).json({
         success: true,
@@ -377,7 +376,7 @@ const getMessages = TryCatch(async (req, res, next) => {
     const chatId = req.params.id;
     const { page = 1 } = req.query;
 
-    const resultPerPage = 20;
+    const resultPerPage = 10;
     const skip = (page - 1) * resultPerPage;
 
     const chat = await Chat.findById(chatId);

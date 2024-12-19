@@ -27,8 +27,8 @@ const Chat = ({ chatId, user }) => {
 
   const members = chatDetails?.data?.chat?.members?.map((member) => member?._id);
 
-  console.log("message", message);
-  console.log("members", members);
+  // console.log("message", message);
+  console.log("oldMessagesChunk", oldMessagesChunk);
 
   const newMessagesListener = useCallback(
     (data) => {
@@ -73,7 +73,7 @@ const Chat = ({ chatId, user }) => {
     <div className="h-[calc(100vh-4rem)] relative">
       <div className="h-[89%]">
         <ChatHeader chatDetails={chatDetails?.data?.chat} />
-        <div ref={containerRef} className="p-2 bg-blue- h-[87%] overflow-y-auto">
+        <div ref={containerRef} className="p-2 bg-blue- h-[87%] overflow-y-auto flex flex-col gap-2">
           {allMessages.map((message) => (
             <MessageComp key={message._id} message={message} user={user} />
           ))}
