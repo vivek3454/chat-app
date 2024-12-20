@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import BackDropLoader from '../loaders/BackDropLoader';
 import Profile from '../specific/Profile';
 import useGetApiReq from "@/hooks/useGetApiReq";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userNotExists } from "@/redux/reducers/auth";
 import { toast } from "react-toastify";
 
@@ -38,6 +38,7 @@ const Header = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { notificationCount } = useSelector((state) => state.chat);
   const { res, fetchData, isLoading } = useGetApiReq();
 
   const handelLogout = async () => {
@@ -88,6 +89,7 @@ const Header = () => {
   }, [])
 
 
+
   return (
     <header className="flex items-center justify-between h-[4rem] relative p-4 bg-blue-400 text-white">
       <div className="text-2xl font-bold">Logo</div>
@@ -117,6 +119,7 @@ const Header = () => {
                 icon={<IoNotifications className='text-lg sm:text-2xl' />}
                 title="Notifications"
                 onClick={openNotification}
+                count={notificationCount}
               />
             </Notifications>
 
@@ -228,13 +231,14 @@ const Header = () => {
 };
 
 
-const NavMenuItem = ({ title, onClick, icon, name = "" }) => {
+const NavMenuItem = ({ title, onClick, icon, name = "", count }) => {
   return (
     <NavigationMenuItem onClick={onClick}>
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger className='flex gap-2'>
+          <TooltipTrigger className='flex gap-2 relative'>
             {icon} {name}
+            {count ? <div className="w-5 h-5 absolute -top-3 -right-2 rounded-full bg-red-400 text-white flex justify-center items-center">{count}</div> :""}
           </TooltipTrigger>
           <TooltipContent>
             <p>{title}</p>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/display-name */
 
 import { useParams } from "react-router-dom"
@@ -7,9 +8,12 @@ import Chatlist from "../specific/Chatlist"
 import { useMyChatsQuery } from "@/redux/api/api"
 import { useDispatch, useSelector } from "react-redux"
 import ChatSkeleton from "../skeleton/ChatSkeleton"
-import { useErrors } from "@/hooks/hooks"
+import { useErrors, useSocketEvents } from "@/hooks/hooks"
 import DataNotFound from "../shared/DataNotFound"
 import { getSocket } from "@/socket"
+import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "@/constants/events"
+import { useCallback } from "react"
+import { incrementNotification } from "@/redux/reducers/chat"
 
 const AppLayout = () => (WrappedComponent) => {
     return (props) => {
@@ -31,7 +35,27 @@ const AppLayout = () => (WrappedComponent) => {
         const chatId = params?.chatId
 
         const socket = getSocket();
-        console.log("socket", socket);
+
+        const newRequestListener = useCallback(() => {
+            dispatch(incrementNotification());
+        }, [dispatch]);
+
+        const newMessageAlertListener = useCallback(
+            // (data) => {
+            //     if (data.chatId === chatId) return;
+            //     dispatch(setNewMessagesAlert(data));
+            // },
+            // [chatId]
+        );
+
+        const eventHandlers = {
+            [NEW_MESSAGE_ALERT]: newMessageAlertListener,
+            [NEW_REQUEST]: newRequestListener,
+            // [REFETCH_CHATS]: refetchListener,
+            // [ONLINE_USERS]: onlineUsersListener,
+        };
+
+        useSocketEvents(socket, eventHandlers);
 
 
         return (

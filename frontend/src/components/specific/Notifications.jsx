@@ -11,12 +11,18 @@ import { Button } from "../ui/button"
 import { useAcceptFriendRequestMutation, useGetNotificationsQuery } from "@/redux/api/api";
 import { useAsyncMutation, useErrors } from "@/hooks/hooks";
 import Spinner from "../shared/Spinner";
+import { useDispatch } from "react-redux";
+import { resetNotificationCount } from "@/redux/reducers/chat";
 
 const Notifications = ({ children }) => {
     const { isLoading, data, error, isError } = useGetNotificationsQuery();
+    const dispatch = useDispatch();
 
-    console.log("notifications",data);
-    
+    console.log("notifications", data);
+    const handleNotificationOpen = () => {
+        dispatch(resetNotificationCount());
+
+    }
 
     const [acceptRequest] = useAsyncMutation(useAcceptFriendRequestMutation);
 
@@ -27,7 +33,7 @@ const Notifications = ({ children }) => {
     useErrors([{ error, isError }]);
 
     return (
-        <DropdownMenu>
+        <DropdownMenu onOpenChange={handleNotificationOpen}>
             <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
             <DropdownMenuContent className="w-80 fixed top-1 right-0">
                 <DropdownMenuLabel>Notifications</DropdownMenuLabel>
@@ -53,7 +59,7 @@ const Notifications = ({ children }) => {
 }
 
 
-const NotificationComp = ({ sender, handler,id }) => {
+const NotificationComp = ({ sender, handler, id }) => {
     return (
         <div className="p-2">
             <div className="flex justify-between items-center w-full">
