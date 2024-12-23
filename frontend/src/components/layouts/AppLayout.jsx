@@ -13,12 +13,12 @@ import DataNotFound from "../shared/DataNotFound"
 import { getSocket } from "@/socket"
 import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "@/constants/events"
 import { useCallback } from "react"
-import { incrementNotification } from "@/redux/reducers/chat"
+import { incrementNotification, setNewMessagesAlert } from "@/redux/reducers/chat"
 
 const AppLayout = () => (WrappedComponent) => {
     return (props) => {
         const dispatch = useDispatch();
-        const { isOpen } = useSelector((state) => state.chat);
+        const { isOpen, newMessagesAlert } = useSelector((state) => state.chat);
         const { user } = useSelector((state) => state.auth);
         console.log("user", user);
 
@@ -41,11 +41,11 @@ const AppLayout = () => (WrappedComponent) => {
         }, [dispatch]);
 
         const newMessageAlertListener = useCallback(
-            // (data) => {
-            //     if (data.chatId === chatId) return;
-            //     dispatch(setNewMessagesAlert(data));
-            // },
-            // [chatId]
+            (data) => {
+                if (data.chatId === chatId) return;
+                dispatch(setNewMessagesAlert(data));
+            },
+            [chatId]
         );
 
         const eventHandlers = {
@@ -64,7 +64,11 @@ const AppLayout = () => (WrappedComponent) => {
                 <Header />
                 <section className="grid grid-cols-1 sm:grid-cols-[40%_60%] md:grid-cols-[30%_70%] h-[calc(100vh-4rem)]">
                     <div className={`${isOpen ? "hidden sm:block" : "block"}`}>
-                        {data?.chats.length > 0 && <Chatlist chats={data?.chats} chatId={chatId} />}
+                        {data?.chats.length > 0 && <Chatlist
+                            newMessagesAlert={newMessagesAlert}
+                            chats={data?.chats}
+                            chatId={chatId}
+                        />}
 
                         {data?.chats.length === 0 && isLoading &&
                             <ChatSkeleton />

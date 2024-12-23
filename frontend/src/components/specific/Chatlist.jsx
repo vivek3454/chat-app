@@ -6,12 +6,7 @@ const Chatlist = ({
   width = "100%",
   chatId,
   onlineUsers = [],
-  newMessagesAlert=[
-    {
-      chatId:"",
-      count:0
-    }
-  ]
+  newMessagesAlert
 }) => {
   return (
     <div className=' sm:block'>
@@ -20,10 +15,7 @@ const Chatlist = ({
           key={i}
           _id={chat?._id}
           sameSender={chatId === chat?._id}
-          newMessageAlert={{
-            chatId:chat?._id,
-            count:2
-          }}
+          newMessageAlert={newMessagesAlert}
           avatar={chat?.avatar}
           name={chat?.name}
           isOnline={chatId === chat?._id}

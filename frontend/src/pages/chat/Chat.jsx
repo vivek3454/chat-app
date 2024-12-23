@@ -10,7 +10,7 @@ import { NEW_MESSAGE } from "@/constants/events";
 import { useErrors, useSocketEvents } from "@/hooks/hooks";
 import { useChatDetailsQuery, useGetMessagesQuery } from "@/redux/api/api";
 import { getSocket } from "@/socket";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MdSend } from "react-icons/md";
 
 
@@ -30,14 +30,11 @@ const Chat = ({ chatId, user }) => {
   // console.log("message", message);
   console.log("oldMessagesChunk", oldMessagesChunk);
 
-  const newMessagesListener = useCallback(
-    (data) => {
-      if (data.chatId !== chatId) return;
+  const newMessagesListener = useCallback((data) => {
+    if (data.chatId !== chatId) return;
 
-      setMessages((prev) => [...prev, data.message]);
-    },
-    [chatId]
-  );
+    setMessages((prev) => [...prev, data.message]);
+  }, [chatId]);
 
   const eventHandler = {
     [NEW_MESSAGE]: newMessagesListener,
@@ -61,6 +58,16 @@ const Chat = ({ chatId, user }) => {
   );
 
   const allMessages = [...oldMessages, ...messages];
+
+  useEffect(() => {
+
+    return () => {
+      setMessages([]);
+      setMessage("");
+      setOldMessages([]);
+      setPage(1);
+    };
+  }, [chatId]);
 
   const errors = [
     { isError: chatDetails.isError, error: chatDetails.error },

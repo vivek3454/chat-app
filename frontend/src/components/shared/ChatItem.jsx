@@ -19,6 +19,9 @@ const ChatItem = ({
     index = 0,
     handleDeleteChat
 }) => {
+
+    console.log("newMessageAlert",newMessageAlert);
+    
     const dispatch = useDispatch();
     return (
         <Link onClick={() => dispatch(handleOpenClose())} to={`/chat/${_id}`} onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}>
@@ -42,7 +45,7 @@ const ChatItem = ({
                     </div>
                     <div className="ml-auto flex flex-col justify-between items-end">
                         <p className="text-xs text-gray-400">24/05/2024</p>
-                        {newMessageAlert.count && <div className="w-5 h-5 rounded-full bg-red-400 text-white flex justify-center items-center">{newMessageAlert.count}</div>}
+                        {newMessageAlert.find((item)=> item.chatId === _id)?.count && <div className="w-5 h-5 rounded-full bg-red-400 text-white flex justify-center items-center">{newMessageAlert.find((item)=> item.chatId === _id)?.count}</div>}
                     </div>
                 </div>
                 <Separator />
