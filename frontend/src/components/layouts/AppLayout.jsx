@@ -12,8 +12,9 @@ import { useErrors, useSocketEvents } from "@/hooks/hooks"
 import DataNotFound from "../shared/DataNotFound"
 import { getSocket } from "@/socket"
 import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "@/constants/events"
-import { useCallback } from "react"
+import { useCallback, useEffect } from "react"
 import { incrementNotification, setNewMessagesAlert } from "@/redux/reducers/chat"
+import { getOrSaveFromStorage } from "@/utils/features"
 
 const AppLayout = () => (WrappedComponent) => {
     return (props) => {
@@ -28,6 +29,9 @@ const AppLayout = () => (WrappedComponent) => {
 
         console.log("error", error);
 
+        useEffect(() => {
+            getOrSaveFromStorage({ key: NEW_MESSAGE_ALERT, value: newMessagesAlert });
+        }, [newMessagesAlert]);
 
         useErrors([{ isError, error }]);
         console.log("chats", data);

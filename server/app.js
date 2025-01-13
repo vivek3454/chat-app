@@ -17,7 +17,7 @@ import { Message } from "./models/message.js";
 import { getSockets } from "./lib/helper.js";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT, START_TYPING, STOP_TYPING } from "./constants/events.js";
 import { socketAuthenticator } from "./middlewares/auth.js";
 
 dotenv.config({
@@ -104,6 +104,16 @@ io.on("connection", (socket) => {
         } catch (error) {
             throw new Error(error);
         }
+    });
+
+    socket.on(START_TYPING, ({ members, chatId }) => {
+        const membersSockets = getSockets(members);
+        socket.to(membersSockets).emit(START_TYPING, { chatId });
+    });
+
+    socket.on(STOP_TYPING, ({ members, chatId }) => {
+        const membersSockets = getSockets(members);
+        socket.to(membersSockets).emit(STOP_TYPING, { chatId });
     });
 
     socket.on("disconnect", () => {

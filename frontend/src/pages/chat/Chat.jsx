@@ -1,26 +1,33 @@
 import { useInfiniteScrollTop } from "6pp";
 import AppLayout from "@/components/layouts/AppLayout";
+import TypingLoader from "@/components/loaders/TypingLoader";
 import MessageComp from "@/components/shared/MessageComp";
 import ChatHeader from "@/components/specific/ChatHeader";
 import FileMenu from "@/components/specific/FileMenu";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
-import { NEW_MESSAGE } from "@/constants/events";
+import { NEW_MESSAGE, START_TYPING, STOP_TYPING } from "@/constants/events";
 import { useErrors, useSocketEvents } from "@/hooks/hooks";
 import { useChatDetailsQuery, useGetMessagesQuery } from "@/redux/api/api";
+import { removeNewMessagesAlert } from "@/redux/reducers/chat";
 import { getSocket } from "@/socket";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MdSend } from "react-icons/md";
+import { useDispatch } from "react-redux";
 
 
 const Chat = ({ chatId, user }) => {
   const socket = getSocket();
-
+  const dispatch = useDispatch();
   const containerRef = useRef(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(1);
+  const [IamTyping, setIamTyping] = useState(false);
+  const [userTyping, setUserTyping] = useState(false);
+  const typingTimeout = useRef(null);
+  const bottomRef = useRef(null);
 
   const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId, populate: true });
   const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
@@ -36,13 +43,49 @@ const Chat = ({ chatId, user }) => {
     setMessages((prev) => [...prev, data.message]);
   }, [chatId]);
 
+  const startTypingListener = useCallback(
+    (data) => {
+      if (data.chatId !== chatId) return;
+
+      setUserTyping(true);
+    },
+    [chatId]
+  );
+
+  const stopTypingListener = useCallback(
+    (data) => {
+      if (data.chatId !== chatId) return;
+      setUserTyping(false);
+    },
+    [chatId]
+  );
+
   const eventHandler = {
     [NEW_MESSAGE]: newMessagesListener,
+    [START_TYPING]: startTypingListener,
+    [STOP_TYPING]: stopTypingListener,
   };
 
   useSocketEvents(socket, eventHandler);
 
-  const handleSendMessage = () => {
+  const messageOnChange = (e) => {
+    setMessage(e.target.value);
+
+    if (!IamTyping) {
+      socket.emit(START_TYPING, { members, chatId });
+      setIamTyping(true);
+    }
+
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+
+    typingTimeout.current = setTimeout(() => {
+      socket.emit(STOP_TYPING, { members, chatId });
+      setIamTyping(false);
+    }, [2000]);
+  };
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
     socket.emit(NEW_MESSAGE, { chatId, members, message });
     setMessage("");
   }
@@ -60,6 +103,7 @@ const Chat = ({ chatId, user }) => {
   const allMessages = [...oldMessages, ...messages];
 
   useEffect(() => {
+    dispatch(removeNewMessagesAlert(chatId));
 
     return () => {
       setMessages([]);
@@ -76,6 +120,11 @@ const Chat = ({ chatId, user }) => {
 
   useErrors(errors);
 
+  useEffect(() => {
+    if (bottomRef.current)
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages,userTyping]);
+
   return (
     <div className="h-[calc(100vh-4rem)] relative">
       <div className="h-[89%]">
@@ -84,15 +133,19 @@ const Chat = ({ chatId, user }) => {
           {allMessages.map((message) => (
             <MessageComp key={message._id} message={message} user={user} />
           ))}
+          {userTyping && <TypingLoader />}
+          <div ref={bottomRef} />
         </div>
       </div>
       <div className="mt-auto flex items-start gap-3 bg-white z-30 p-2 h-[11%]">
         <FileMenu chatId={chatId} />
 
-        <Input onChange={(e) => setMessage(e.target.value)} value={message} placeholder="Type Message Here..." />
-        <Button disabled={!message.trim()} onClick={handleSendMessage} variant="chat">
-          <MdSend />
-        </Button>
+        <form onSubmit={handleSendMessage} className="w-full flex gap-2">
+          <Input onChange={messageOnChange} value={message} placeholder="Type Message Here..." />
+          <Button disabled={!message.trim()} type="submit" variant="chat">
+            <MdSend />
+          </Button>
+        </form>
       </div>
     </div>
   )
