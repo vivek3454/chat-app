@@ -7,7 +7,7 @@ import FileMenu from "@/components/specific/FileMenu";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
-import { NEW_MESSAGE, START_TYPING, STOP_TYPING } from "@/constants/events";
+import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from "@/constants/events";
 import { useErrors, useSocketEvents } from "@/hooks/hooks";
 import { useChatDetailsQuery, useGetMessagesQuery } from "@/redux/api/api";
 import { removeNewMessagesAlert } from "@/redux/reducers/chat";
@@ -60,7 +60,26 @@ const Chat = ({ chatId, user }) => {
     [chatId]
   );
 
+  const alertListener = useCallback(
+    (data) => {
+      if (data.chatId !== chatId) return;
+      const messageForAlert = {
+        content: data.message,
+        sender: {
+          _id: "djasdhajksdhasdsadasdas",
+          name: "Admin",
+        },
+        chat: chatId,
+        createdAt: new Date().toISOString(),
+      };
+
+      setMessages((prev) => [...prev, messageForAlert]);
+    },
+    [chatId]
+  );
+
   const eventHandler = {
+    [ALERT]: alertListener,
     [NEW_MESSAGE]: newMessagesListener,
     [START_TYPING]: startTypingListener,
     [STOP_TYPING]: stopTypingListener,
@@ -123,7 +142,7 @@ const Chat = ({ chatId, user }) => {
   useEffect(() => {
     if (bottomRef.current)
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [messages,userTyping]);
+  }, [messages, userTyping]);
 
   return (
     <div className="h-[calc(100vh-4rem)] relative">

@@ -68,7 +68,7 @@ module.exports = {
         },
         bounceCustom: {
           '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-0.4rem)' },
+          '50%': { transform: 'translateY(-0.2rem)', backgroundColor: 'gray', },
         },
       },
       animation: {

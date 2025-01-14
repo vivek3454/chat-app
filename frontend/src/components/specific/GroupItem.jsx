@@ -4,7 +4,7 @@ import { Separator } from "../ui/separator"
 import groupImg from "@/assets/group.png"
 
 const GroupItem = ({ chatId, group }) => {
-    // const { name, _id, avatar } = group;
+    const { name, _id, avatar } = group;
 
     return (
         <Link
@@ -17,7 +17,7 @@ const GroupItem = ({ chatId, group }) => {
                     <AvatarFallback className="relative z-10">U</AvatarFallback>
                 </Avatar>
                 <div>
-                    <h2 className="text-lg font-semibold">Chat 1</h2>
+                    <h2 className="text-lg font-semibold">{name}</h2>
                 </div>
             </div>
             <Separator />
