@@ -14,6 +14,7 @@ const GroupsManagement = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const chatId = useSearchParams()[0].get("group");
+  console.log("chatId", chatId);
 
   const navigateBack = () => {
     navigate("/")
@@ -30,7 +31,7 @@ const GroupsManagement = () => {
 
   useErrors(errors);
 
-  console.log("myGroups",myGroups);  
+  console.log("myGroups", myGroups);
 
   const handleMobile = () => {
     setIsMobileMenuOpen((prev) => !prev)
@@ -50,16 +51,18 @@ const GroupsManagement = () => {
           <div className='hidden md:flex flex-col'>
             <GroupList myGroups={myGroups?.data?.groups} chatId={chatId} />
           </div>
-          <div className='bg-gray-50 py-4 px-12'>
+          <div className='bg-gray-50 py-4 px-4 sm:px-12'>
             <div className='flex justify-between items-center'>
               <Button onClick={navigateBack} variant="outline" size="sm" className="rounded-full">
                 <FaArrowLeftLong />
               </Button>
+              <h2 className='text-2xl text-center w-full font-medium'>Group Management</h2>
+              {/* <div></div> */}
               <Button onClick={handleMobile} variant="ghost" size="sm" className="rounded-full block md:hidden">
                 <MdMenu size={24} />
               </Button>
             </div>
-            <GroupDetails />
+            {chatId && <GroupDetails chatId={chatId} />}
           </div>
         </div>
       </div>

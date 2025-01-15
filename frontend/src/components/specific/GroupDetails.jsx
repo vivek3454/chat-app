@@ -1,16 +1,42 @@
-import { Suspense, lazy, useState } from "react"
+import { Suspense, lazy, useEffect, useState } from "react"
 import { MdClose, MdEdit } from "react-icons/md"
 import { Input } from "../ui/input";
 import UserComp from "../shared/UserComp";
 import { Button } from "../ui/button";
 import BackDropLoader from "../loaders/BackDropLoader";
+import { useChatDetailsQuery } from "@/redux/api/api";
+import { useErrors } from "@/hooks/hooks";
 const AddMember = lazy(() => import("./AddMember"))
 const ConfirmDeleteAlert = lazy(() => import("../shared/ConfirmDeleteAlert"))
 
-const GroupDetails = () => {
+const GroupDetails = ({ chatId }) => {
     const [isNameEdit, setIsNameEdit] = useState(false);
     const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
     const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+    const [groupName, setGroupName] = useState("");
+    const [groupMembers, setGroupMembers] = useState([]);
+
+    const groupDetails = useChatDetailsQuery(
+        { chatId, populate: true },
+        { skip: !chatId }
+    );
+
+    console.log("groupDetails", groupDetails.data);
+
+    useEffect(() => {
+        setGroupName(groupDetails?.data?.chat?.name);
+        setGroupMembers(groupDetails?.data?.chat?.members || []);
+    }, [groupDetails?.data])
+
+
+    const errors = [
+        {
+            isError: groupDetails.isError,
+            error: groupDetails.error,
+        },
+    ];
+
+    useErrors(errors);
 
     const openEdit = () => {
         setIsNameEdit((prev) => !prev);
@@ -31,11 +57,11 @@ const GroupDetails = () => {
             <div className="flex justify-center gap-2 items-center">
                 {isNameEdit ?
                     <>
-                        <Input placeholder="Enter Group Name" className="max-w-52 w-full" />
-                        <MdClose onClick={openEdit} size={22} className="cursor-pointer" />
+                        <Input value={groupName} placeholder="Enter Group Name" className="max-w-52 w-full" />
+                        <Button onClick={openEdit} className="cursor-pointer" >Update</Button>
                     </>
                     : <>
-                        <h1 className="text-center font-bold text-3xl">Group Name</h1>
+                        <h1 className="text-center font-bold text-3xl">{groupName}</h1>
                         <MdEdit onClick={openEdit} size={22} className="cursor-pointer" />
                     </>
                 }
@@ -48,7 +74,14 @@ const GroupDetails = () => {
                 </div>
             </div>
             <div className="flex flex-col gap-3 mt-6">
-                <UserComp />
+                {groupMembers?.map((member) => (
+                    <UserComp
+                        key={member._id}
+                        user={member}
+                        isAdded
+                        handler={() => console.log("removing member")}
+                    />
+                ))}
             </div>
 
             {isAddMemberOpen &&

@@ -8,10 +8,10 @@ const GroupItem = ({ chatId, group }) => {
 
     return (
         <Link
-            // to={`?group/${_id}`}
-            // onClick={(e) => chatId === _id && e.preventDefault()}
+            to={`?group=${_id}`}
+            onClick={(e) => chatId === _id && e.preventDefault()}
             className={`hover:bg-gray-50 cursor-pointer`}>
-            <div className="flex gap-4 p-2">
+            <div className={`flex gap-4 p-2 ${chatId === _id && "bg-gray-200"}`}>
                 <Avatar>
                     <AvatarImage className="relative z-10" src={groupImg} />
                     <AvatarFallback className="relative z-10">U</AvatarFallback>

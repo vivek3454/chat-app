@@ -1,13 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAsyncMutation } from "@/hooks/hooks";
 import { useSendFriendRequestMutation } from "@/redux/api/api";
+import { FaMinus } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6"
 
-const UserComp = ({ user }) => {
+const UserComp = ({ user, handler = "", isAdded }) => {
     const [sendFriendRequest, isLoadingSendFriendRequest] = useAsyncMutation(useSendFriendRequestMutation);
-
-    console.log("user: " + user);
-    
 
     const handleSendFriendReq = async () => {
         await sendFriendRequest("Sending friend request...", { userId: user?._id });
@@ -22,8 +20,9 @@ const UserComp = ({ user }) => {
                 </Avatar>
                 <h2 className="text-lg">{user?.name}</h2>
             </div>
-            <button onClick={handleSendFriendReq} className="w-10 h-10 rounded-full bg-blue-400 flex justify-center cursor-pointer items-center">
-                <FaPlus className="text-white" />
+            <button type="button" onClick={handler ? () => handler(user?._id) : handleSendFriendReq} className={`w-10 h-10 rounded-full ${isAdded ? "bg-destructive" : "bg-blue-400"} flex justify-center cursor-pointer items-center`}>
+                {isAdded ? <FaMinus className="text-white" />
+                    : <FaPlus className="text-white" />}
             </button>
         </div>
     )

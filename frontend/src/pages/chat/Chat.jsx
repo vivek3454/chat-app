@@ -64,7 +64,7 @@ const Chat = ({ chatId, user }) => {
     (data) => {
       if (data.chatId !== chatId) return;
       const messageForAlert = {
-        content: data.message,
+        content: data,
         sender: {
           _id: "djasdhajksdhasdsadasdas",
           name: "Admin",
