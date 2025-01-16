@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/display-name */
 
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import Header from "../header/Header"
 import Title from "../shared/Title"
 import Chatlist from "../specific/Chatlist"
@@ -11,7 +11,7 @@ import ChatSkeleton from "../skeleton/ChatSkeleton"
 import { useErrors, useSocketEvents } from "@/hooks/hooks"
 import DataNotFound from "../shared/DataNotFound"
 import { getSocket } from "@/socket"
-import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "@/constants/events"
+import { NEW_MESSAGE_ALERT, NEW_REQUEST, REFETCH_CHATS } from "@/constants/events"
 import { useCallback, useEffect } from "react"
 import { incrementNotification, setNewMessagesAlert } from "@/redux/reducers/chat"
 import { getOrSaveFromStorage } from "@/utils/features"
@@ -19,6 +19,7 @@ import { getOrSaveFromStorage } from "@/utils/features"
 const AppLayout = () => (WrappedComponent) => {
     return (props) => {
         const dispatch = useDispatch();
+        const navigate = useNavigate();
         const { isOpen, newMessagesAlert } = useSelector((state) => state.chat);
         const { user } = useSelector((state) => state.auth);
         console.log("user", user);
@@ -52,10 +53,15 @@ const AppLayout = () => (WrappedComponent) => {
             [chatId]
         );
 
+        const refetchListener = useCallback(() => {
+            refetch();
+            // navigate("/");
+        }, [refetch]);
+
         const eventHandlers = {
             [NEW_MESSAGE_ALERT]: newMessageAlertListener,
             [NEW_REQUEST]: newRequestListener,
-            // [REFETCH_CHATS]: refetchListener,
+            [REFETCH_CHATS]: refetchListener,
             // [ONLINE_USERS]: onlineUsersListener,
         };
 

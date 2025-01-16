@@ -100,6 +100,33 @@ const api = createApi({
             }),
             invalidatesTags: ["Chat"],
         }),
+        renameGroup: builder.mutation({
+            query: ({ chatId, name }) => ({
+                url: `/chat/${chatId}`,
+                method: "PUT",
+                credentials: "include",
+                body: { name },
+            }),
+            invalidatesTags: ["Chat"],
+        }),
+        removeGroupMember: builder.mutation({
+            query: ({ chatId, userId }) => ({
+                url: `/chat/removemember`,
+                method: "PUT",
+                credentials: "include",
+                body: { chatId, userId },
+            }),
+            invalidatesTags: ["Chat"],
+        }),
+        addGroupMembers: builder.mutation({
+            query: ({ members, chatId }) => ({
+                url: `/chat/addmembers`,
+                method: "PUT",
+                credentials: "include",
+                body: { members, chatId },
+            }),
+            invalidatesTags: ["Chat"],
+        }),
     }),
 });
 
@@ -116,4 +143,7 @@ export const {
     useMyGroupsQuery,
     useAvailableFriendsQuery,
     useNewGroupMutation,
+    useRenameGroupMutation,
+    useRemoveGroupMemberMutation,
+    useAddGroupMembersMutation
 } = api;

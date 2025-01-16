@@ -4,10 +4,22 @@ import { Input } from "../ui/input";
 import UserComp from "../shared/UserComp";
 import { Button } from "../ui/button";
 import BackDropLoader from "../loaders/BackDropLoader";
-import { useChatDetailsQuery } from "@/redux/api/api";
-import { useErrors } from "@/hooks/hooks";
+import { useChatDetailsQuery, useRemoveGroupMemberMutation, useRenameGroupMutation } from "@/redux/api/api";
+import { useAsyncMutation, useErrors } from "@/hooks/hooks";
 const AddMember = lazy(() => import("./AddMember"))
 const ConfirmDeleteAlert = lazy(() => import("../shared/ConfirmDeleteAlert"))
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import { FaMinus } from "react-icons/fa";
+import { toast } from "react-toastify";
+
 
 const GroupDetails = ({ chatId }) => {
     const [isNameEdit, setIsNameEdit] = useState(false);
@@ -21,11 +33,20 @@ const GroupDetails = ({ chatId }) => {
         { skip: !chatId }
     );
 
+    const [updateGroup, isLoadingGroupName] = useAsyncMutation(
+        useRenameGroupMutation
+    );
+
+    const [removeMember, isLoadingRemoveMember] = useAsyncMutation(
+        useRemoveGroupMemberMutation
+    );
+
     console.log("groupDetails", groupDetails.data);
 
     useEffect(() => {
         setGroupName(groupDetails?.data?.chat?.name);
         setGroupMembers(groupDetails?.data?.chat?.members || []);
+        setIsNameEdit(false);
     }, [groupDetails?.data])
 
 
@@ -52,17 +73,29 @@ const GroupDetails = ({ chatId }) => {
 
     const handleDelete = () => { }
 
+    const handleRemoveMember = (userId) => {
+        removeMember("Removing Member...", { chatId, userId });
+    };
+
+    const handleGroupNameUpdate = () => {
+        if (!groupName) return toast.error("Group name is required");
+        updateGroup("Updating Group Name...", {
+            chatId,
+            name: groupName,
+        });
+    }
+
     return (
         <div className="mt-5">
             <div className="flex justify-center gap-2 items-center">
                 {isNameEdit ?
                     <>
-                        <Input value={groupName} placeholder="Enter Group Name" className="max-w-52 w-full" />
-                        <Button onClick={openEdit} className="cursor-pointer" >Update</Button>
+                        <Input value={groupName} onChange={(e) => setGroupName(e.target.value)} placeholder="Enter Group Name" className="max-w-52 w-full" />
+                        <Button disabled={isLoadingGroupName} onClick={handleGroupNameUpdate} className="cursor-pointer">Update</Button>
                     </>
                     : <>
                         <h1 className="text-center font-bold text-3xl">{groupName}</h1>
-                        <MdEdit onClick={openEdit} size={22} className="cursor-pointer" />
+                        <MdEdit disabled={isLoadingGroupName} onClick={openEdit} size={22} className="cursor-pointer" />
                     </>
                 }
             </div>
@@ -73,7 +106,38 @@ const GroupDetails = ({ chatId }) => {
                     <Button onClick={handleDeleteAlertCloseOpen} size="sm" variant="destructive">Delete Group</Button>
                 </div>
             </div>
-            <div className="flex flex-col gap-3 mt-6">
+
+            <Table className="mt-6">
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Image</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Username</TableHead>
+                        <TableHead>Bio</TableHead>
+                        <TableHead>Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {groupMembers?.map((member) => (
+                        <TableRow key={member._id}>
+                            <TableCell>
+                                <img className="w-12 h-12 rounded-full" src={member?.avatar?.url} alt="" />
+                            </TableCell>
+                            <TableCell>{member?.name}</TableCell>
+                            <TableCell>{member?.username}</TableCell>
+                            <TableCell>{member?.bio} </TableCell>
+                            <TableCell>
+                                <button onClick={() => handleRemoveMember(member?._id)} type="button" className={`w-10 h-10 rounded-full bg-destructive flex justify-center cursor-pointer items-center`}>
+                                    <FaMinus className="text-white" />
+                                </button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+
+
+            {/* <div className="flex flex-col gap-3 mt-6">
                 {groupMembers?.map((member) => (
                     <UserComp
                         key={member._id}
@@ -82,13 +146,14 @@ const GroupDetails = ({ chatId }) => {
                         handler={() => console.log("removing member")}
                     />
                 ))}
-            </div>
+            </div> */}
 
             {isAddMemberOpen &&
                 <Suspense fallback={<BackDropLoader />}>
                     <AddMember
                         isAddMemberOpen={isAddMemberOpen}
                         handleClose={handleAddMemberCloseOpen}
+                        chatId={chatId}
                     />
                 </Suspense>
             }
