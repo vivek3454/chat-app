@@ -1,13 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
-import { memo } from "react"
-import { Link } from "react-router-dom"
+import { memo, useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import group from "@/assets/group.png"
 import { useDispatch } from "react-redux"
 import { handleOpenClose } from "@/redux/reducers/chat"
 import ContextMenuComp from "./ContextMenu"
 import { useAsyncMutation } from "@/hooks/hooks"
-import { useDeleteChatMutation } from "@/redux/api/api"
+import { useDeleteChatMutation, useLeaveGroupMutation } from "@/redux/api/api"
 
 const ChatItem = ({
     avatar = [],
@@ -20,18 +20,38 @@ const ChatItem = ({
     newMessageAlert,
     index = 0,
 }) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     console.log("newMessageAlert", newMessageAlert);
-    const [deleteChat, isLoadingDeleteChat] = useAsyncMutation(
+
+    const [deleteChat, _, deleteChatData] = useAsyncMutation(
         useDeleteChatMutation
     );
-    const dispatch = useDispatch();
 
-    const handleDeleteChat = () => { }
+    const [leaveGroup, __, leaveGroupData] = useAsyncMutation(
+        useLeaveGroupMutation
+    );
+
+    const handleLeaveGroup = () => {
+        leaveGroup("Leaving Group...", _id);
+    };
+
+    const handleDeleteChat = () => {
+        deleteChat("Deleting Chat...", _id);
+    };
+
+    useEffect(() => {
+        if (deleteChatData || leaveGroupData) navigate("/");
+    }, [deleteChatData, leaveGroupData]);
+
 
     return (
         <Link onClick={() => dispatch(handleOpenClose())} to={`/chat/${_id}`}>
-            <ContextMenuComp handleDeleteChat={handleDeleteChat}>
+            <ContextMenuComp
+                handleDeleteChat={groupChat ? handleLeaveGroup : handleDeleteChat}
+                groupChat={groupChat}
+            >
                 <div className={`hover:bg-gray-50 cursor-pointer ${sameSender && "bg-gray-50"}`}>
                     <div className="flex gap-4 p-2">
                         <span className="relative">
