@@ -15,6 +15,7 @@ import { getSocket } from "@/socket";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MdSend } from "react-icons/md";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 
 const Chat = ({ chatId, user }) => {
@@ -28,6 +29,7 @@ const Chat = ({ chatId, user }) => {
   const [userTyping, setUserTyping] = useState(false);
   const typingTimeout = useRef(null);
   const bottomRef = useRef(null);
+  const navigate = useNavigate();
 
   const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId, populate: true });
   const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
@@ -36,6 +38,10 @@ const Chat = ({ chatId, user }) => {
 
   // console.log("message", message);
   console.log("oldMessagesChunk", oldMessagesChunk);
+
+  useEffect(() => {
+    if (oldMessagesChunk.isError) return navigate("/");
+  }, [oldMessagesChunk.isError]);
 
   const newMessagesListener = useCallback((data) => {
     if (data.chatId !== chatId) return;
@@ -62,6 +68,9 @@ const Chat = ({ chatId, user }) => {
 
   const alertListener = useCallback(
     (data) => {
+      console.log("data.chatId", data);
+      console.log("chatId", chatId);
+
       if (data.chatId !== chatId) return;
       const messageForAlert = {
         content: data,

@@ -4,7 +4,7 @@ import { Input } from "../ui/input";
 import UserComp from "../shared/UserComp";
 import { Button } from "../ui/button";
 import BackDropLoader from "../loaders/BackDropLoader";
-import { useChatDetailsQuery, useRemoveGroupMemberMutation, useRenameGroupMutation } from "@/redux/api/api";
+import { useChatDetailsQuery, useDeleteChatMutation, useRemoveGroupMemberMutation, useRenameGroupMutation } from "@/redux/api/api";
 import { useAsyncMutation, useErrors } from "@/hooks/hooks";
 const AddMember = lazy(() => import("./AddMember"))
 const ConfirmDeleteAlert = lazy(() => import("../shared/ConfirmDeleteAlert"))
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table"
 import { FaMinus } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 
 const GroupDetails = ({ chatId }) => {
@@ -27,6 +28,7 @@ const GroupDetails = ({ chatId }) => {
     const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
     const [groupName, setGroupName] = useState("");
     const [groupMembers, setGroupMembers] = useState([]);
+    const navigate = useNavigate();
 
     const groupDetails = useChatDetailsQuery(
         { chatId, populate: true },
@@ -41,7 +43,10 @@ const GroupDetails = ({ chatId }) => {
         useRemoveGroupMemberMutation
     );
 
-    console.log("groupDetails", groupDetails.data);
+    const [deleteGroup, isLoadingDeleteGroup] = useAsyncMutation(
+        useDeleteChatMutation
+    );
+
 
     useEffect(() => {
         setGroupName(groupDetails?.data?.chat?.name);
@@ -71,7 +76,11 @@ const GroupDetails = ({ chatId }) => {
         setIsAddMemberOpen((prev) => !prev);
     }
 
-    const handleDelete = () => { }
+    const handleDelete = () => {
+        deleteGroup("Deleting Group...", chatId);
+        handleDeleteAlertCloseOpen();
+        navigate("/groups-management");
+    }
 
     const handleRemoveMember = (userId) => {
         removeMember("Removing Member...", { chatId, userId });

@@ -31,6 +31,8 @@ const sendToken = (res, user, code, message) => {
 };
 
 const emitEvent = (req, event, users, data) => {
+    console.log("data", data);
+
     const io = req.app.get("io");
     const usersSocket = getSockets(users);
     io.to(usersSocket).emit(event, data);
@@ -66,15 +68,15 @@ const uploadFilesToCloudinary = async (files = []) => {
     }
 };
 
-// const deletFilesFromCloudinary = async (public_ids) => {
-//     // Delete files from cloudinary
-// };
+const deletFilesFromCloudinary = async (public_ids) => {
+    // Delete files from cloudinary
+};
 
 export {
     connectDB,
     sendToken,
     cookieOptions,
     emitEvent,
-    // deletFilesFromCloudinary,
+    deletFilesFromCloudinary,
     uploadFilesToCloudinary,
 };

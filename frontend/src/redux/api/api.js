@@ -127,6 +127,14 @@ const api = createApi({
             }),
             invalidatesTags: ["Chat"],
         }),
+        deleteChat: builder.mutation({
+            query: (chatId) => ({
+                url: `/chat/${chatId}`,
+                method: "DELETE",
+                credentials: "include",
+            }),
+            invalidatesTags: ["Chat"],
+        }),
     }),
 });
 
@@ -145,5 +153,6 @@ export const {
     useNewGroupMutation,
     useRenameGroupMutation,
     useRemoveGroupMemberMutation,
-    useAddGroupMembersMutation
+    useAddGroupMembersMutation,
+    useDeleteChatMutation,
 } = api;
