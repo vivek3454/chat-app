@@ -13,7 +13,7 @@ import { adminOnly } from "../middlewares/auth.js";
 
 const adminRouter = express.Router();
 
-adminRouter.post("/verify", adminLoginValidator(), validateHandler, adminLogin);
+adminRouter.post("/login", adminLoginValidator(), validateHandler, adminLogin);
 
 adminRouter.get("/logout", adminLogout);
 

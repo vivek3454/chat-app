@@ -20,9 +20,12 @@ const authSlice = createSlice({
             state.user = null;
             state.loader = false;
         },
+        changeAdminState: (state, payload) => {
+            state.isAdmin = payload;
+        },
     },
 
 });
 
 export default authSlice;
-export const { userExists, userNotExists } = authSlice.actions;
+export const { userExists, userNotExists, changeAdminState } = authSlice.actions;

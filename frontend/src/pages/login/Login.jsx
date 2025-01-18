@@ -85,7 +85,7 @@ const Login = () => {
     const toggleLogin = () => setIsLogin((prev) => !prev);
     const dispatch = useDispatch();
 
-    const { res, fetchData, isLoading } = usePostApiReq();
+    const { res, fetchData, isLoading } = usePostApiReq();    
 
     const onSubmit = async (apiData) => {
 
@@ -205,6 +205,7 @@ const Login = () => {
                         {isLogin ? "Login" : "Signup"}
                     </Button> */}
                     <Button
+                        disabled={isLoading}
                         className="text-blue-400 mx-auto flex"
                         onClick={toggleLogin}
                         variant="link"

@@ -12,20 +12,29 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Navigate } from "react-router-dom"
+import { Navigate, useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
+import usePostApiReq from "@/hooks/usePostApiReq"
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { changeAdminState } from "@/redux/reducers/auth"
 
-const isAdmin = true;
+// const isAdmin = false;
 const AdminLogin = () => {
+    const { isAdmin } = useSelector((state) => state.auth)
+    const navigate = useNavigate();
 
     const LoginSignupSchema =
         z.object({
-            username: z.string().min(2, {
-                message: "Username must be at least 5 characters.",
+            secretKey: z.string().min(2, {
+                message: "Secret Key is required.",
             }),
-            password: z.string().min(2, {
-                message: "Password is invalid. It must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*).",
-            }),
+            // username: z.string().min(2, {
+            //     message: "Username must be at least 5 characters.",
+            // }),
+            // password: z.string().min(2, {
+            //     message: "Password is invalid. It must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*).",
+            // }),
         })
 
     const form = useForm({
@@ -33,25 +42,50 @@ const AdminLogin = () => {
         defaultValues: {
             username: "",
             password: "",
+            secretKey: "",
         },
     })
 
     if (isAdmin) return <Navigate to={"/admin/dashboard"} />
 
+    const dispatch = useDispatch();
+    const { res, fetchData, isLoading } = usePostApiReq();
+
     const onSubmit = (data) => {
         console.log("data", data);
-        toast.success("Login successful.");
+        fetchData("/admin/login", { secretKey: data.secretKey });
     }
+
+    useEffect(() => {
+        if (res?.status === 200 || res?.status === 201) {
+            dispatch(changeAdminState(true));
+            navigate("/admin/dashboard");
+        }
+    }, [res])
 
     return (
         <div className="flex items-start min-h-screen p-4 bg-gradient-to-r from-blue-500/55 to-green-500.55 ">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-96 w-full shadow bg-white border rounded-lg p-4 m-auto">
-                    <h1 className="text-4xl font-bold text-center mb-8">
+                    <h1 className="text-3xl font-bold text-center mb-8">
                         Admin Login
                     </h1>
 
                     <FormField
+                        control={form.control}
+                        name="secretKey"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Secret Key</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Enter Secret Key" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* <FormField
                         control={form.control}
                         name="username"
                         render={({ field }) => (
@@ -77,7 +111,7 @@ const AdminLogin = () => {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    /> */}
                     <Button variant="chat" className="w-full mt-6" type="submit">
                         Login
                     </Button>
