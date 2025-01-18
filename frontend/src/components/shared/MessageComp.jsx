@@ -2,6 +2,7 @@ import { fileFormat } from '@/utils/features';
 import { format, formatDistanceToNow } from 'date-fns'
 import React, { memo } from 'react'
 import RenderAttachment from './RenderAttachment';
+import { motion } from "motion/react";
 
 const MessageComp = ({ message, user }) => {
     // console.log("message", message);
@@ -14,7 +15,11 @@ const MessageComp = ({ message, user }) => {
 
 
     return (
-        <div className={`chat ${sameSender ? "chat-end" : "chat-start"}`}>
+        <motion.div
+            initial={{ opacity: 0, x: sameSender ? "5%" : "-5%" }}
+            whileInView={{ opacity: 1, x: 0 }}
+            className={`chat ${sameSender ? "chat-end" : "chat-start"}`}
+        >
             <div className="chat-header">
                 {sameSender ? user?.name : sender?.name}
                 <time className="text-xs opacity-50 ml-2">{timeAgo}</time>
@@ -38,7 +43,7 @@ const MessageComp = ({ message, user }) => {
                 {content}
             </div>
             <div className="chat-footer opacity-50">Delivered</div>
-        </div>
+        </motion.div>
     )
 }
 

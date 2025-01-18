@@ -8,6 +8,7 @@ import { handleOpenClose } from "@/redux/reducers/chat"
 import ContextMenuComp from "./ContextMenu"
 import { useAsyncMutation } from "@/hooks/hooks"
 import { useDeleteChatMutation, useLeaveGroupMutation } from "@/redux/api/api"
+import { motion } from "motion/react";
 
 const ChatItem = ({
     avatar = [],
@@ -52,7 +53,11 @@ const ChatItem = ({
                 handleDeleteChat={groupChat ? handleLeaveGroup : handleDeleteChat}
                 groupChat={groupChat}
             >
-                <div className={`hover:bg-gray-50 cursor-pointer ${sameSender && "bg-gray-50"}`}>
+                <motion.div
+                    initial={{ opacity: 0, y: "-100%" }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * index }}
+                    className={`hover:bg-gray-50 cursor-pointer ${sameSender && "bg-gray-50"}`}>
                     <div className="flex gap-4 p-2">
                         <span className="relative">
                             {groupChat ?
@@ -76,7 +81,7 @@ const ChatItem = ({
                         </div>
                     </div>
                     <Separator />
-                </div>
+                </motion.div>
             </ContextMenuComp>
         </Link>
     )

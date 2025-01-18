@@ -91,7 +91,7 @@ const Header = () => {
 
 
   return (
-    <header className="flex items-center justify-between h-[4rem] relative p-4 bg-blue-400 text-white">
+    <header className="flex items-center z-20 justify-between h-[4rem] relative p-4 bg-blue-400 text-white">
       <div className="text-2xl font-bold">Logo</div>
       <nav className="flex space-x-4">
         <NavigationMenu>

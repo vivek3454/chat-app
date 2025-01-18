@@ -154,10 +154,10 @@ const Chat = ({ chatId, user }) => {
   }, [messages, userTyping]);
 
   return (
-    <div className="h-[calc(100vh-4rem)] relative">
+    <div className="h-[calc(100vh-4rem)] w-full relative">
       <div className="h-[89%]">
         <ChatHeader chatDetails={chatDetails?.data?.chat} />
-        <div ref={containerRef} className="p-2 bg-blue- h-[87%] overflow-y-auto flex flex-col gap-2">
+        <div ref={containerRef} className="p-2 bg-blue- h-[87%] overflow-x-hidden overflow-y-auto flex flex-col gap-2">
           {allMessages.map((message) => (
             <MessageComp key={message._id} message={message} user={user} />
           ))}

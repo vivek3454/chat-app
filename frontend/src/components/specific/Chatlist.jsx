@@ -20,6 +20,7 @@ const Chatlist = ({
           name={chat?.name}
           isOnline={chatId === chat?._id}
           groupChat={chat?.groupChat}
+          index={i}
         />
       ))}
     </div>
