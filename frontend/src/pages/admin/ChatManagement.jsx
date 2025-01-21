@@ -10,9 +10,29 @@ import {
     TableHeader,
     TableRow
 } from "@/components/ui/table"
+import useGetApiReq from '@/hooks/useGetApiReq';
+import { useEffect, useState } from 'react';
 
 
 const ChatManagement = () => {
+    const { res, fetchData, isLoading } = useGetApiReq();
+    const [chats, setChats] = useState([]);
+
+    const getStats = () => {
+        fetchData(`/admin/chats`);
+    };
+
+    useEffect(() => {
+        getStats();
+    }, [])
+
+    useEffect(() => {
+        if (res?.status === 200 || res?.status === 201) {
+            console.log("chats response", res);
+            setChats(res?.data.chats)
+        }
+    }, [res])
+
     return (
         <AdminLayout>
             <div className='shadow-md rounded-md p-4 mt-8 bg-white'>
@@ -30,25 +50,27 @@ const ChatManagement = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
-                            <TableCell>Id</TableCell>
-                            <TableCell>
-                                <Avatar>
-                                    <AvatarImage className="relative z-10" src="https://github.com/shadcn.png" />
-                                    <AvatarFallback className="relative z-10">U</AvatarFallback>
-                                </Avatar>
-                            </TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>120</TableCell>
-                            <TableCell>
-                                <Avatar>
-                                    <AvatarImage className="relative z-10" src="https://github.com/shadcn.png" />
-                                    <AvatarFallback className="relative z-10">U</AvatarFallback>
-                                </Avatar>
-                            </TableCell>
-                            <TableCell>30</TableCell>
-                            <TableCell>Created By</TableCell>
-                        </TableRow>
+                        {chats.map((chat) => (
+                            <TableRow key={chat?._id}>
+                                <TableCell>{chat?._id}</TableCell>
+                                <TableCell>
+                                    <Avatar>
+                                        <AvatarImage className="relative z-10" src="https://github.com/shadcn.png" />
+                                        <AvatarFallback className="relative z-10">U</AvatarFallback>
+                                    </Avatar>
+                                </TableCell>
+                                <TableCell>{chat?.name}</TableCell>
+                                <TableCell>{chat?.totalMembers}</TableCell>
+                                <TableCell>
+                                    <Avatar>
+                                        <AvatarImage className="relative z-10" src="https://github.com/shadcn.png" />
+                                        <AvatarFallback className="relative z-10">U</AvatarFallback>
+                                    </Avatar>
+                                </TableCell>
+                                <TableCell>{chat?.totalMessages}</TableCell>
+                                <TableCell>{chat?.creator?.name}</TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                     {/* <TableFooter>
                         <TableRow>

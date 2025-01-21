@@ -9,9 +9,10 @@ import ProtectRoute from './components/auth/ProtectRoute';
 import LayoutLoader from './components/loaders/LayoutLoader';
 import ErrorModal from './components/specific/ErrorModal';
 import useGetApiReq from './hooks/useGetApiReq';
-import { userExists, userNotExists } from './redux/reducers/auth';
+import { changeAdminState, userExists, userNotExists } from './redux/reducers/auth';
 import { SocketProvider } from './socket';
 import error from './redux/reducers/error';
+import AdminProtectedRoute from './components/auth/AdminProtectedRoute';
 
 const Home = lazy(() => import('./pages/home/Home'))
 const Login = lazy(() => import('./pages/login/Login'))
@@ -28,9 +29,6 @@ const Messages = lazy(() => import('./pages/admin/Messages'))
 function App() {
   const { user, loader } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
-  console.log("user", user);
-
 
   const { isLoading } = useSelector((state) => state?.loading);
   const { res, fetchData, error } = useGetApiReq();
@@ -49,7 +47,7 @@ function App() {
     if (error) {
       dispatch(userNotExists());
     }
-  }, [res,error])
+  }, [res, error])
 
 
   return loader ? (
@@ -57,7 +55,7 @@ function App() {
   ) : (
     <>
 
-      {/* {isLoading && <LayoutLoader />} */}
+      {isLoading && <LayoutLoader />}
       <ErrorModal />
 
       <Router>
@@ -81,10 +79,12 @@ function App() {
 
             {/* Admin Routes */}
             <Route path='/admin' element={<AdminLogin />} />
-            <Route path='/admin/dashboard' element={<Dashboard />} />
-            <Route path='/admin/users-management' element={<UserManagement />} />
-            <Route path='/admin/chats-management' element={<ChatManagement />} />
-            <Route path='/admin/messages' element={<Messages />} />
+            {/* <Route element={<AdminProtectedRoute />}> */}
+              <Route path='/admin/dashboard' element={<Dashboard />} />
+              <Route path='/admin/users-management' element={<UserManagement />} />
+              <Route path='/admin/chats-management' element={<ChatManagement />} />
+              <Route path='/admin/messages' element={<Messages />} />
+            {/* </Route> */}
 
             <Route path='*' element={<NotFound />} />
           </Routes>

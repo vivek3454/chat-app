@@ -10,6 +10,8 @@ import {
     TableHeader,
     TableRow
 } from "@/components/ui/table"
+import useGetApiReq from '@/hooks/useGetApiReq'
+import { useEffect, useState } from 'react'
 
 const invoices = [
     {
@@ -57,6 +59,24 @@ const invoices = [
 ]
 
 const UserManagement = () => {
+    const { res, fetchData, isLoading } = useGetApiReq();
+    const [users, setUsers] = useState([]);
+
+    const getStats = () => {
+        fetchData(`/admin/users`);
+    };
+
+    useEffect(() => {
+        getStats();
+    }, [])
+
+    useEffect(() => {
+        if (res?.status === 200 || res?.status === 201) {
+            console.log("users response", res);
+            setUsers(res?.data.users)
+        }
+    }, [res])
+
     return (
         <AdminLayout>
             <div className='shadow-md rounded-md p-4 mt-8 bg-white'>
@@ -73,19 +93,21 @@ const UserManagement = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
-                            <TableCell>Id</TableCell>
-                            <TableCell>
-                            <Avatar>
-                                <AvatarImage className="relative z-10" src="https://github.com/shadcn.png" />
-                                <AvatarFallback className="relative z-10">U</AvatarFallback>
-                            </Avatar>
-                            </TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Username</TableCell>
-                            <TableCell>Friends</TableCell>
-                            <TableCell>Groups</TableCell>
-                        </TableRow>
+                        {users.map((user) => (
+                            <TableRow key={user?._id}>
+                                <TableCell>{user?._id}</TableCell>
+                                <TableCell>
+                                    <Avatar>
+                                        <AvatarImage className="relative z-10" src={user?.avatar} />
+                                        <AvatarFallback className="relative z-10">U</AvatarFallback>
+                                    </Avatar>
+                                </TableCell>
+                                <TableCell>{user?.name}</TableCell>
+                                <TableCell>{user?.username}</TableCell>
+                                <TableCell>{user?.friends}</TableCell>
+                                <TableCell>{user?.groups}</TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                     {/* <TableFooter>
                         <TableRow>

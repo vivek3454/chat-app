@@ -22,6 +22,8 @@ const useGetApiReq = () => {
             }
         } catch (error) {
             setError(error);
+            console.log("error", error);
+            
             toast.error(error.response?.data?.message || "An error occurred.")
             // await dispatch(handleErrorModal({ isOpen: true, message: error.response?.data?.message || "An error occurred.", isLogoutBtn: true }));
         } finally {

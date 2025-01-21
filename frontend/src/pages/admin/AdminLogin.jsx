@@ -18,6 +18,7 @@ import usePostApiReq from "@/hooks/usePostApiReq"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { changeAdminState } from "@/redux/reducers/auth"
+import useGetApiReq from "@/hooks/useGetApiReq"
 
 // const isAdmin = false;
 const AdminLogin = () => {
@@ -46,8 +47,27 @@ const AdminLogin = () => {
         },
     })
 
-    if (isAdmin) return <Navigate to={"/admin/dashboard"} />
+    const { res: res1, fetchData: fetchData1, error: error1 } = useGetApiReq();
 
+    useEffect(() => {
+        (async () => {
+            fetchData1("/admin/");
+        })()
+    }, []);
+
+
+    useEffect(() => {
+        if (res1?.status === 200 || res1?.status === 201) {
+            console.log("get admin response", res1);
+
+            dispatch(changeAdminState(res1?.data?.admin))
+        }
+        if (error1) {
+            dispatch(changeAdminState(false));
+        }
+    }, [res1, error1])
+
+    
     const dispatch = useDispatch();
     const { res, fetchData, isLoading } = usePostApiReq();
 
@@ -62,6 +82,8 @@ const AdminLogin = () => {
             navigate("/admin/dashboard");
         }
     }, [res])
+    
+    // if (isAdmin) return <Navigate to={"/admin/dashboard"} />
 
     return (
         <div className="flex items-start min-h-screen p-4 bg-gradient-to-r from-blue-500/55 to-green-500.55 ">

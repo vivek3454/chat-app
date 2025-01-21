@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { MdDashboard, MdGroups, MdLogout, MdManageAccounts, MdMessage } from 'react-icons/md'
 import { Link, useLocation } from 'react-router-dom'
 import { Button } from '../ui/button'
+import LogoutModal from './LogoutModal'
 
 const Sidebar = () => {
+    const [isLogOutModalOpen, setIsLogOutModalOpen] = useState(false);
+
     const adminTabs = [
         {
             name: "Dashboard",
@@ -41,11 +44,18 @@ const Sidebar = () => {
                     </Link>
                 ))}
                 <Link className='mx-7'>
-                    <Button variant="ghost" className={`flex gap-2 text-base justify-start w-full`}>
+                    <Button onClick={() => setIsLogOutModalOpen(true)} variant="ghost" className={`flex gap-2 text-base justify-start w-full`}>
                         <MdLogout size={22} />
                         Logout
                     </Button>
                 </Link>
+
+                {isLogOutModalOpen &&
+                    <LogoutModal
+                        isLogOutModalOpen={isLogOutModalOpen}
+                        setIsLogOutModalOpen={setIsLogOutModalOpen}
+                    />
+                }
             </div>
         </div>
     )
