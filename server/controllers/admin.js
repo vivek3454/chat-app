@@ -75,9 +75,17 @@ const allUsers = TryCatch(async (req, res) => {
 });
 
 const allChats = TryCatch(async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const chats = await Chat.find({})
+        .skip(skip)
+        .limit(limit)
         .populate("members", "name avatar")
         .populate("creator", "name avatar");
+
+        const totalChats = await Chat.countDocuments()
 
     const transformedChats = await Promise.all(
         chats.map(async ({ members, _id, groupChat, name, creator }) => {
@@ -105,34 +113,31 @@ const allChats = TryCatch(async (req, res) => {
 
     return res.status(200).json({
         status: "success",
+        totalPages: Math.ceil(totalChats / limit),
+        currentPage: page,
         chats: transformedChats,
     });
 });
 
 const allMessages = TryCatch(async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const messages = await Message.find({})
+        .skip(skip)
+        .limit(limit)
         .populate("sender", "name avatar")
-        .populate("chat", "groupChat");
+        .populate("chat", "groupChat name");
 
-    const transformedMessages = messages.map(
-        ({ content, attachments, _id, sender, createdAt, chat }) => ({
-            _id,
-            attachments,
-            content,
-            createdAt,
-            chat: chat._id,
-            groupChat: chat.groupChat,
-            sender: {
-                _id: sender._id,
-                name: sender.name,
-                avatar: sender.avatar.url,
-            },
-        })
-    );
+    const totalMessages = await Message.countDocuments(); // Total messages in the collection
 
-    return res.status(200).json({
-        success: true,
-        messages: transformedMessages,
+    res.json({
+        status:"success",
+        messages,
+        totalPages: Math.ceil(totalMessages / limit),
+        currentPage: page,
+        totalMessages
     });
 });
 

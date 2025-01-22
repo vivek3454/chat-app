@@ -1,5 +1,5 @@
 import AdminLayout from '@/components/layouts/AdminLayout'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Pagination,
     PaginationContent,
@@ -20,9 +20,37 @@ import {
     TableHeader,
     TableRow
 } from "@/components/ui/table"
+import useGetApiReq from '@/hooks/useGetApiReq'
+import { format } from 'date-fns'
+import { Button } from '@/components/ui/button'
+import { FaEye } from 'react-icons/fa'
+import DataNotFound from '@/components/shared/DataNotFound'
+import Spinner from '@/components/shared/Spinner'
+import PaginationComp from '@/components/Pagination'
 
 
 const Messages = () => {
+    const { res, fetchData, isLoading } = useGetApiReq();
+    const [messages, setMessages] = useState([]);
+    const [page, setPage] = useState(1);
+    const [pageCount, setPageCount] = useState(0);
+
+    const getMessages = () => {
+        fetchData(`/admin/messages?page=${page}`);
+    };
+
+    useEffect(() => {
+        getMessages();
+    }, [page])
+
+    useEffect(() => {
+        if (res?.status === 200 || res?.status === 201) {
+            console.log("messeages response", res);
+            setMessages(res?.data.messages)
+            setPageCount(res?.data.totalPages)
+        }
+    }, [res])
+
     return (
         <AdminLayout>
             <div className='shadow-md rounded-md p-4 mt-8 bg-white'>
@@ -32,7 +60,7 @@ const Messages = () => {
                         <TableRow>
                             <TableHead>Id</TableHead>
                             <TableHead>Attachments</TableHead>
-                            <TableHead>Content</TableHead>
+                            <TableHead className="w-60">Content</TableHead>
                             <TableHead>Sent by</TableHead>
                             <TableHead>Chat</TableHead>
                             <TableHead>Group Chat</TableHead>
@@ -40,45 +68,42 @@ const Messages = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
-                            <TableCell>Id</TableCell>
-                            <TableCell>Attachments</TableCell>
-                            <TableCell>Content</TableCell>
-                            <TableCell>Sent by</TableCell>
-                            <TableCell>Chat</TableCell>
-                            <TableCell>Group Chat</TableCell>
-                            <TableCell>Time</TableCell>
-                        </TableRow>
+                        {messages.map((message) => (
+                            <TableRow key={message?._id}>
+                                <TableCell>{message?._id}</TableCell>
+                                <TableCell>
+                                    {message?.attachments.length === 0 ?
+                                        "No attachments" :
+                                        <Button size="icon">
+                                            <FaEye />
+                                        </Button>
+                                    }
+                                </TableCell>
+                                <TableCell>{message?.content || "No content"}</TableCell>
+                                <TableCell>{message?.sender?.name || "None"}</TableCell>
+                                <TableCell>{message?.chat?.name}</TableCell>
+                                <TableCell>{message?.chat?.groupChat ? "Yes" : "No"}</TableCell>
+                                <TableCell>{message?.createdAt && format(new Date(message?.createdAt), "dd, MMMM, yyyy")}</TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
-                    {/* <TableFooter>
-                        <TableRow>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell>
-                                <Pagination>
-                                    <PaginationContent className="ml-auto">
-                                        <PaginationItem>
-                                            <PaginationPrevious href="#" />
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink href="#">1</PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationEllipsis />
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationNext href="#" />
-                                        </PaginationItem>
-                                    </PaginationContent>
-                                </Pagination>
-
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter> */}
                 </Table>
+
+                {messages.length === 0 &&
+                    isLoading &&
+                    <Spinner />
+                }
+
+                {messages.length === 0 &&
+                    !isLoading &&
+                    <DataNotFound name="Messages" />
+                }
+
+                <PaginationComp
+                    page={page}
+                    pageCount={pageCount}
+                    setPage={setPage}
+                />
             </div>
         </AdminLayout>
     )
