@@ -48,7 +48,15 @@ const getAdminData = TryCatch(async (req, res, next) => {
 });
 
 const allUsers = TryCatch(async (req, res) => {
-    const users = await User.find({});
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const users = await User.find({})
+        .skip(skip)
+        .limit(limit)
+
+    const totalUsers = await User.countDocuments()
 
     const transformedUsers = await Promise.all(
         users.map(async ({ name, username, avatar, _id }) => {
@@ -70,6 +78,9 @@ const allUsers = TryCatch(async (req, res) => {
 
     return res.status(200).json({
         status: "success",
+        totalPages: Math.ceil(totalUsers / limit),
+        currentPage: page,
+        totalUsers,
         users: transformedUsers,
     });
 });
@@ -85,7 +96,7 @@ const allChats = TryCatch(async (req, res) => {
         .populate("members", "name avatar")
         .populate("creator", "name avatar");
 
-        const totalChats = await Chat.countDocuments()
+    const totalChats = await Chat.countDocuments()
 
     const transformedChats = await Promise.all(
         chats.map(async ({ members, _id, groupChat, name, creator }) => {
@@ -115,6 +126,7 @@ const allChats = TryCatch(async (req, res) => {
         status: "success",
         totalPages: Math.ceil(totalChats / limit),
         currentPage: page,
+        totalChats,
         chats: transformedChats,
     });
 });
@@ -133,7 +145,7 @@ const allMessages = TryCatch(async (req, res) => {
     const totalMessages = await Message.countDocuments(); // Total messages in the collection
 
     res.json({
-        status:"success",
+        status: "success",
         messages,
         totalPages: Math.ceil(totalMessages / limit),
         currentPage: page,

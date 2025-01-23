@@ -1,4 +1,7 @@
 import AdminLayout from '@/components/layouts/AdminLayout'
+import { PaginationWithLinks } from '@/components/PaginationWithLinks'
+import DataNotFound from '@/components/shared/DataNotFound'
+import Spinner from '@/components/shared/Spinner'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 
@@ -61,19 +64,24 @@ const invoices = [
 const UserManagement = () => {
     const { res, fetchData, isLoading } = useGetApiReq();
     const [users, setUsers] = useState([]);
+    const [page, setPage] = useState(1);
+    const [pageCount, setPageCount] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
 
     const getStats = () => {
-        fetchData(`/admin/users`);
+        fetchData(`/admin/users?page=${page}`);
     };
 
     useEffect(() => {
         getStats();
-    }, [])
+    }, [page])
 
     useEffect(() => {
         if (res?.status === 200 || res?.status === 201) {
             console.log("users response", res);
             setUsers(res?.data.users)
+            setPageCount(res?.data.totalPages);
+            setTotalCount(res?.data.totalMessages)
         }
     }, [res])
 
@@ -109,35 +117,24 @@ const UserManagement = () => {
                             </TableRow>
                         ))}
                     </TableBody>
-                    {/* <TableFooter>
-                        <TableRow>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell>
-                                <Pagination>
-                                    <PaginationContent className="ml-auto">
-                                        <PaginationItem>
-                                            <PaginationPrevious href="#" />
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink href="#">1</PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationEllipsis />
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationNext href="#" />
-                                        </PaginationItem>
-                                    </PaginationContent>
-                                </Pagination>
-
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter> */}
                 </Table>
+
+                {users.length === 0 &&
+                    isLoading &&
+                    <Spinner />
+                }
+
+                {users.length === 0 &&
+                    !isLoading &&
+                    <DataNotFound name="User" />
+                }
+
+                <PaginationWithLinks
+                    page={page}
+                    pageCount={pageCount}
+                    setPage={setPage}
+                    totalCount={totalCount}
+                />
             </div>
         </AdminLayout>
     )

@@ -1,32 +1,22 @@
 import AdminLayout from '@/components/layouts/AdminLayout'
-import React, { useEffect, useState } from 'react'
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination"
+import { useEffect, useState } from 'react'
 
 
+import { PaginationWithLinks } from '@/components/PaginationWithLinks'
+import DataNotFound from '@/components/shared/DataNotFound'
+import Spinner from '@/components/shared/Spinner'
+import { Button } from '@/components/ui/button'
 import {
     Table,
     TableBody,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow
 } from "@/components/ui/table"
 import useGetApiReq from '@/hooks/useGetApiReq'
 import { format } from 'date-fns'
-import { Button } from '@/components/ui/button'
 import { FaEye } from 'react-icons/fa'
-import DataNotFound from '@/components/shared/DataNotFound'
-import Spinner from '@/components/shared/Spinner'
-import PaginationComp from '@/components/Pagination'
 
 
 const Messages = () => {
@@ -34,6 +24,7 @@ const Messages = () => {
     const [messages, setMessages] = useState([]);
     const [page, setPage] = useState(1);
     const [pageCount, setPageCount] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
 
     const getMessages = () => {
         fetchData(`/admin/messages?page=${page}`);
@@ -48,6 +39,7 @@ const Messages = () => {
             console.log("messeages response", res);
             setMessages(res?.data.messages)
             setPageCount(res?.data.totalPages)
+            setTotalCount(res?.data.totalMessages)
         }
     }, [res])
 
@@ -74,9 +66,11 @@ const Messages = () => {
                                 <TableCell>
                                     {message?.attachments.length === 0 ?
                                         "No attachments" :
-                                        <Button size="icon">
-                                            <FaEye />
-                                        </Button>
+                                        <a target='_blank' href={message?.attachments[0]?.url}>
+                                            <Button size="icon">
+                                                <FaEye />
+                                            </Button>
+                                        </a>
                                     }
                                 </TableCell>
                                 <TableCell>{message?.content || "No content"}</TableCell>
@@ -99,10 +93,11 @@ const Messages = () => {
                     <DataNotFound name="Messages" />
                 }
 
-                <PaginationComp
+                <PaginationWithLinks
                     page={page}
                     pageCount={pageCount}
                     setPage={setPage}
+                    totalCount={totalCount}
                 />
             </div>
         </AdminLayout>

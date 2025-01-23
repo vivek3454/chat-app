@@ -1,8 +1,8 @@
-import AdminLayout from '@/components/layouts/AdminLayout'
-import PaginationComp from '@/components/Pagination';
+import OverlappingImages from '@/components/admin/OverlappingImages';
+import AdminLayout from '@/components/layouts/AdminLayout';
+import { PaginationWithLinks } from '@/components/PaginationWithLinks';
 import DataNotFound from '@/components/shared/DataNotFound';
 import Spinner from '@/components/shared/Spinner';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 
 import {
@@ -12,7 +12,7 @@ import {
     TableHead,
     TableHeader,
     TableRow
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import useGetApiReq from '@/hooks/useGetApiReq';
 import { useEffect, useState } from 'react';
 
@@ -22,6 +22,7 @@ const ChatManagement = () => {
     const [chats, setChats] = useState([]);
     const [page, setPage] = useState(1);
     const [pageCount, setPageCount] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
 
     const getChats = () => {
         fetchData(`/admin/chats?page=${page}`);
@@ -29,13 +30,14 @@ const ChatManagement = () => {
 
     useEffect(() => {
         getChats();
-    }, [])
+    }, [page])
 
     useEffect(() => {
         if (res?.status === 200 || res?.status === 201) {
             console.log("chats response", res);
             setChats(res?.data.chats)
             setPageCount(res?.data.totalPages)
+            setTotalCount(res?.data.totalChats)
         }
     }, [res])
 
@@ -47,7 +49,7 @@ const ChatManagement = () => {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Id</TableHead>
-                            <TableHead>Avatar</TableHead>
+                            {/* <TableHead>Avatar</TableHead> */}
                             <TableHead>Name</TableHead>
                             <TableHead>Total Members</TableHead>
                             <TableHead>Members</TableHead>
@@ -60,21 +62,19 @@ const ChatManagement = () => {
                         {chats.map((chat) => (
                             <TableRow key={chat?._id}>
                                 <TableCell>{chat?._id}</TableCell>
-                                <TableCell>
-                                    <Avatar>
-                                        <AvatarImage className="relative z-10" src="https://github.com/shadcn.png" />
-                                        <AvatarFallback className="relative z-10">U</AvatarFallback>
-                                    </Avatar>
-                                </TableCell>
                                 <TableCell>{chat?.name}</TableCell>
                                 <TableCell>{chat?.totalMembers}</TableCell>
-                                <TableCell>{chat?.groupChat ? "Yes" : "No"}</TableCell>
                                 <TableCell>
-                                    <Avatar>
-                                        <AvatarImage className="relative z-10" src="https://github.com/shadcn.png" />
-                                        <AvatarFallback className="relative z-10">U</AvatarFallback>
-                                    </Avatar>
+                                    <OverlappingImages
+                                        images={chat?.avatar}
+                                    />
                                 </TableCell>
+                                {/* <TableCell>
+                                    <OverlappingImages
+                                        images={chat?.members.map((member) => member.avatar)}
+                                    />
+                                </TableCell> */}
+                                <TableCell>{chat?.groupChat ? "Yes" : "No"}</TableCell>
                                 <TableCell>{chat?.totalMessages}</TableCell>
                                 <TableCell>{chat?.creator?.name}</TableCell>
                             </TableRow>
@@ -91,10 +91,11 @@ const ChatManagement = () => {
                     <DataNotFound name="Chat" />
                 }
 
-                <PaginationComp
+                <PaginationWithLinks
                     page={page}
                     pageCount={pageCount}
                     setPage={setPage}
+                    totalCount={totalCount}
                 />
             </div>
         </AdminLayout>
