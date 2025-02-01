@@ -7,7 +7,7 @@ import FileMenu from "@/components/specific/FileMenu";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
-import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from "@/constants/events";
+import { ALERT, CHAT_JOINED, CHAT_LEAVED, NEW_MESSAGE, START_TYPING, STOP_TYPING } from "@/constants/events";
 import { useErrors, useSocketEvents } from "@/hooks/hooks";
 import { useChatDetailsQuery, useGetMessagesQuery } from "@/redux/api/api";
 import { removeNewMessagesAlert } from "@/redux/reducers/chat";
@@ -131,6 +131,7 @@ const Chat = ({ chatId, user }) => {
   const allMessages = [...oldMessages, ...messages];
 
   useEffect(() => {
+    socket.emit(CHAT_JOINED, { userId: user?._id, members });
     dispatch(removeNewMessagesAlert(chatId));
 
     return () => {
@@ -138,6 +139,7 @@ const Chat = ({ chatId, user }) => {
       setMessage("");
       setOldMessages([]);
       setPage(1);
+      socket.emit(CHAT_LEAVED, { userId: user?._id, members });
     };
   }, [chatId]);
 

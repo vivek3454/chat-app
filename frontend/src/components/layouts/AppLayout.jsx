@@ -11,8 +11,8 @@ import ChatSkeleton from "../skeleton/ChatSkeleton"
 import { useErrors, useSocketEvents } from "@/hooks/hooks"
 import DataNotFound from "../shared/DataNotFound"
 import { getSocket } from "@/socket"
-import { NEW_MESSAGE_ALERT, NEW_REQUEST, REFETCH_CHATS } from "@/constants/events"
-import { useCallback, useEffect } from "react"
+import { NEW_MESSAGE_ALERT, NEW_REQUEST, ONLINE_USERS, REFETCH_CHATS } from "@/constants/events"
+import { useCallback, useEffect, useState } from "react"
 import { incrementNotification, setNewMessagesAlert } from "@/redux/reducers/chat"
 import { getOrSaveFromStorage } from "@/utils/features"
 
@@ -22,6 +22,7 @@ const AppLayout = () => (WrappedComponent) => {
         const navigate = useNavigate();
         const { isOpen, newMessagesAlert } = useSelector((state) => state.chat);
         const { user } = useSelector((state) => state.auth);
+        const [onlineUsers, setOnlineUsers] = useState([]);
         console.log("user", user);
 
 
@@ -58,11 +59,17 @@ const AppLayout = () => (WrappedComponent) => {
             navigate("/");
         }, [refetch, navigate]);
 
+        const onlineUsersListener = useCallback((data) => {
+            console.log("onlineUsers",data);
+            
+            setOnlineUsers(data);
+        }, []);
+
         const eventHandlers = {
             [NEW_MESSAGE_ALERT]: newMessageAlertListener,
             [NEW_REQUEST]: newRequestListener,
             [REFETCH_CHATS]: refetchListener,
-            // [ONLINE_USERS]: onlineUsersListener,
+            [ONLINE_USERS]: onlineUsersListener,
         };
 
         useSocketEvents(socket, eventHandlers);
@@ -78,6 +85,7 @@ const AppLayout = () => (WrappedComponent) => {
                             newMessagesAlert={newMessagesAlert}
                             chats={data?.chats}
                             chatId={chatId}
+                            onlineUsers={onlineUsers}
                         />}
 
                         {data?.chats.length === 0 && isLoading &&

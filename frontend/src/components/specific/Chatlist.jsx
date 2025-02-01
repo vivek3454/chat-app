@@ -18,7 +18,7 @@ const Chatlist = ({
           newMessageAlert={newMessagesAlert}
           avatar={chat?.avatar}
           name={chat?.name}
-          isOnline={chatId === chat?._id}
+          isOnline={chat?.members?.some((member) => onlineUsers.includes(member) )}
           groupChat={chat?.groupChat}
           index={i}
         />
