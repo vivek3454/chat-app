@@ -68,9 +68,6 @@ const Chat = ({ chatId, user }) => {
 
   const alertListener = useCallback(
     (data) => {
-      console.log("data.chatId", data);
-      console.log("chatId", chatId);
-
       if (data.chatId !== chatId) return;
       const messageForAlert = {
         content: data,
@@ -149,6 +146,8 @@ const Chat = ({ chatId, user }) => {
   ];
 
   useErrors(errors);
+
+  
 
   useEffect(() => {
     if (bottomRef.current)

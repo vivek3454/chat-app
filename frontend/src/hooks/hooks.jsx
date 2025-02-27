@@ -25,13 +25,13 @@ const useAsyncMutation = (mutatationHook) => {
             const res = await mutate(...args);
 
             if (res.data) {
-                toast.update(toastId, { render: res.data.message || "Updated data successfully", type: "success", isLoading: false });
+                toast.update(toastId, { render: res.data.message || "Updated data successfully", type: "success", isLoading: false, autoClose: 1000 });
                 // toast.success(res.data.message || "Updated data successfully", {
                 //     toastId: toastId,
                 // });
                 setData(res.data);
             } else {
-                toast.update(toastId, { render: res?.error?.data?.message || "Something went wrong", type: "error", isLoading: false });
+                toast.update(toastId, { render: res?.error?.data?.message || "Something went wrong", type: "error", isLoading: false, autoClose: 1000 });
                 // toast.error(res?.error?.data?.message || "Something went wrong", {
                 //     toastId: toastId,
                 // });
@@ -39,7 +39,7 @@ const useAsyncMutation = (mutatationHook) => {
         } catch (error) {
             console.log(error);
             // toast.error("Something went wrong", { toastId: toastId });
-            toast.update(toastId, { render: "Something went wrong", type: "error", isLoading: false });
+            toast.update(toastId, { render: "Something went wrong", type: "error", isLoading: false, autoClose: 1000 });
         } finally {
             setIsLoading(false);
         }

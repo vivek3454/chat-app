@@ -11,6 +11,10 @@ const schema = new Schema(
             type: String,
             required: true,
         },
+        lastSeen: {
+            type: Date,
+            default: null,
+        },
         username: {
             type: String,
             required: true,

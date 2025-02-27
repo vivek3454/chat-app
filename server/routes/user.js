@@ -34,5 +34,6 @@ userRouter.put(
 userRouter.get("/notifications", getMyNotifications);
 
 userRouter.get("/friends", getMyFriends);
+// userRouter.get("/last-seen", getUserLastSeen);
 
 export default userRouter;

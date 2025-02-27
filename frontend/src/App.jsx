@@ -9,10 +9,8 @@ import ProtectRoute from './components/auth/ProtectRoute';
 import LayoutLoader from './components/loaders/LayoutLoader';
 import ErrorModal from './components/specific/ErrorModal';
 import useGetApiReq from './hooks/useGetApiReq';
-import { changeAdminState, userExists, userNotExists } from './redux/reducers/auth';
+import { userExists, userNotExists } from './redux/reducers/auth';
 import { SocketProvider } from './socket';
-import error from './redux/reducers/error';
-import AdminProtectedRoute from './components/auth/AdminProtectedRoute';
 
 const Home = lazy(() => import('./pages/home/Home'))
 const Login = lazy(() => import('./pages/login/Login'))

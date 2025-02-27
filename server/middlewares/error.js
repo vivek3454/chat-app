@@ -1,9 +1,13 @@
+import multer from "multer";
+
 const envMode = process.env?.NODE_ENV?.trim() || "PRODUCTION";
 
 const TryCatch = (passedFunc) => async (req, res, next) => {
     try {
         await passedFunc(req, res, next);
     } catch (error) {
+        console.log("error", error);
+
         next(error);
     }
 };
@@ -11,6 +15,13 @@ const TryCatch = (passedFunc) => async (req, res, next) => {
 const errorMiddleware = (err, req, res, next) => {
     err.message ||= "Internal Server Error";
     err.statusCode ||= 500;
+
+    if (err instanceof multer.MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+            err.message = "File size exceeds the allowed limit (5MB)";
+            err.statusCode = 400;
+        }
+    }
 
     if (err.code === 11000) {
         const error = Object.keys(err.keyPattern).join(",");

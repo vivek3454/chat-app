@@ -1,17 +1,17 @@
 import { fileFormat } from '@/utils/features';
-import { format, formatDistanceToNow } from 'date-fns'
-import React, { memo } from 'react'
-import RenderAttachment from './RenderAttachment';
+import { format } from 'date-fns';
 import { motion } from "motion/react";
+import { memo } from 'react';
+import RenderAttachment from './RenderAttachment';
 
 const MessageComp = ({ message, user }) => {
-    // console.log("message", message);
+    console.log("message", message);
 
-    const { _id, sender, content, attachments = [], createdAt } = message;
+    const { _id, sender, content, attachments = [], createdAt,status } = message;
     // const attachments = []
     const sameSender = sender?._id === user?._id
-    // const timeAgo = format(new Date(), "hh:mm");
-    const timeAgo = createdAt ? formatDistanceToNow(new Date(createdAt), { addSuffix: true }) : formatDistanceToNow(new Date(), { addSuffix: true });
+    const timeAgo = format(new Date(createdAt), "hh:mm aa");
+    // const timeAgo = createdAt ? formatDistanceToNow(new Date(createdAt), { addSuffix: true }) : formatDistanceToNow(new Date(), { addSuffix: true });
 
 
     return (
@@ -42,7 +42,7 @@ const MessageComp = ({ message, user }) => {
                 })}
                 {content}
             </div>
-            <div className="chat-footer opacity-50">Delivered</div>
+            {/* <div className="chat-footer opacity-50">{status}</div> */}
         </motion.div>
     )
 }

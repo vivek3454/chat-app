@@ -36,6 +36,8 @@ const FileMenu = ({ chatId }) => {
 
     const fileChangeHandler = async (e, key) => {
         const files = Array.from(e.target.files);
+        console.log(`${key} files`,files);
+        
 
         if (files.length <= 0) return;
 
@@ -53,14 +55,16 @@ const FileMenu = ({ chatId }) => {
             files.forEach((file) => myForm.append("files", file));
 
             const res = await sendAttachments(myForm);
+            console.log("sendAttachments res",res);
+            
 
-            if (res.data) toast.update(toastId, { render: `${key} sent successfully`, type: "success", isLoading: false });
-            else toast.update(toastId, { render: `Failed to send ${key}`, type: "error", isLoading: false });
+            if (res.data) toast.update(toastId, { render: `${key} sent successfully`, type: "success", isLoading: false , autoClose: 1000});
+            else toast.update(toastId, { render:res?.error?.data?.message|| `Failed to send ${key}`, type: "error", isLoading: false, autoClose: 1000 });
 
             // Fetching Here
         } catch (error) {
             console.log("error", error);
-            toast.update(toastId, { render: error, type: "error", isLoading: false });
+            toast.update(toastId, { render: error, type: "error", isLoading: false, autoClose: 1000 });
         } finally {
             // setUploadingLoader(false);
         }

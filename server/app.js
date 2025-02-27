@@ -17,8 +17,9 @@ import { Message } from "./models/message.js";
 import { getSockets } from "./lib/helper.js";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
-import { CHAT_JOINED, CHAT_LEAVED, NEW_MESSAGE, NEW_MESSAGE_ALERT, ONLINE_USERS, START_TYPING, STOP_TYPING } from "./constants/events.js";
+import { CHAT_JOINED, CHAT_LEAVED, NEW_MESSAGE, NEW_MESSAGE_ALERT, ONLINE_USERS, START_TYPING, STOP_TYPING, USER_LAST_SEEN } from "./constants/events.js";
 import { socketAuthenticator } from "./middlewares/auth.js";
+import { User } from "./models/user.js";
 
 dotenv.config({
     path: "./.env",
@@ -84,6 +85,7 @@ io.on("connection", (socket) => {
                 name: user.name,
             },
             chat: chatId,
+            status: "sent",
             createdAt: new Date().toISOString(),
         };
 
@@ -91,6 +93,7 @@ io.on("connection", (socket) => {
             content: message,
             sender: user._id,
             chat: chatId,
+            status: "sent",
         };
 
         const membersSocket = getSockets(members);
@@ -131,10 +134,18 @@ io.on("connection", (socket) => {
         io.to(membersSocket).emit(ONLINE_USERS, Array.from(onlineUsers));
     });
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async() => {
         // console.log("disconnected");
         userSocketIDs.delete(user._id.toString());
         onlineUsers.delete(user._id.toString());
+
+        await User.findByIdAndUpdate(user._id, { lastSeen: new Date() });
+
+        socket.broadcast.emit(USER_LAST_SEEN, {
+            userId: user._id,
+            lastSeen: new Date(),
+        });
+
         socket.broadcast.emit(ONLINE_USERS, Array.from(onlineUsers));
     });
 });

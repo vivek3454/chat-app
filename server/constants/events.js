@@ -14,6 +14,7 @@ const CHAT_JOINED = "CHAT_JOINED";
 const CHAT_LEAVED = "CHAT_LEAVED";
 
 const ONLINE_USERS = "ONLINE_USERS";
+const USER_LAST_SEEN = "USER_LAST_SEEN";
 
 export {
     ALERT,
@@ -26,5 +27,6 @@ export {
     STOP_TYPING,
     CHAT_JOINED,
     CHAT_LEAVED,
-    ONLINE_USERS
+    ONLINE_USERS,
+    USER_LAST_SEEN
 };

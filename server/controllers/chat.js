@@ -217,8 +217,9 @@ const leaveGroup = TryCatch(async (req, res, next) => {
 
 const sendAttachments = TryCatch(async (req, res, next) => {
     const { chatId } = req.body;
-
+    
     const files = req.files || [];
+    console.log("files sendAttachments",files);
 
     if (files.length < 1)
         return next(new ErrorHandler("Please Upload Attachments", 400));
